@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head prefix="og: https://ogp.me/ns#">
+	<title>Kuniwak's Home</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="og:url" content="https://home.kuniwak.com">
+	<meta name="og:title" content="Kuniwak's Home VR">
+	<meta name="og:description" content="Kuniwak's Home VR is a virtual reality experience that allows you to explore my home in 3D.">
+	<meta name="og:image" content="https://home.kuniwak.com/ogp/1200x630.png">
+	<meta name="og:type" content="website">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:site" content="@orga_chem">
+	<meta name="twitter:creator" content="@orga_chem">
+	<meta name="twitter:title" content="Kuniwak's Home VR">
+	<meta name="twitter:description" content="Kuniwak's Home VR is a virtual reality experience that allows you to explore my home in 3D.">
+	<meta name="twitter:image" content="https://home.kuniwak.com/ogp/960x960.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="./32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="./16x16.png">
+	<link rel="apple-touch-icon" type="image/png" sizes="114x114" href="./apple-touch-icon.png">
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<canvas class="main"></canvas>
+	<div class="hud">
+		<div class="help box hidden">
+			<dl>
+				<dt>w</dt>
+				<dd>Move forward</dd>
+				<dt>1</dt>
+				<dd>Move to 1F</dd>
+				<dt>2</dt>
+				<dd>Move to 2F</dd>
+				<dt>3</dt>
+				<dd>Open Doors</dd>
+				<dt>4</dt>
+				<dd>Close Doors</dd>
+				<dt>↑↓</dt>
+				<dd>Move vertically</dd>
+			</dl>
+		</div>
+		<div class="acknowledgement box">
+			<dl>
+				<dt>PoC</dt>
+				<dd><a href="https://github.com/cocopon">cocopon</a></dd>
+				<dt>Modeling</dt>
+				<dt><a href="https://www.blender.org">Blender</a></dt>
+				<dt>Textures</dt>
+				<dd><a href="https://ambientcg.com/">ambientCG</a></dd>
+			</dl>
+		</div>
+		<button class="start control hidden">Start</button>
+		<div class="controller hidden">
+			 <button class="move-to-1F control">1F</button>
+			 <button class="move-to-2F control">2F</button>
+			 <button class="move-forward control">↑</button>
+			 <button class="open control">Open</button>
+			 <button class="close control">Close</button>
+		</div>
+	</div>
+	<script src="bundle.js" defer></script>
+</body>
+</html>

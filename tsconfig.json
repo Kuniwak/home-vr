@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		"lib": ["DOM", "ES2015"],
+		"moduleResolution": "Node",
+		"rootDir": "./src",
+		"outDir": "./lib",
+		"strict": true,
+		"resolveJsonModule": true,
+		"target": "ES6"
+	}
+}

@@ -1,0 +1,111 @@
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
+button {
+    touch-action: manipulation;
+    user-select: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.hud * {
+    font: 13px sans-serif;
+    color: white;
+}
+
+.hud .box {
+    position: absolute;
+    background: hsla(0, 0%, 0%, 0.3);
+    border: white solid 1px;
+    border-radius: 4px;
+    opacity: 0.5;
+}
+
+.hud .control {
+    display: block;
+    background: hsla(0, 0%, 0%, 0.3);
+    border: white solid 1px;
+    border-radius: 4px;
+    padding: 12px 6px;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.hud .control:hover {
+    background: hsla(0, 0%, 0%, 0.4);
+}
+
+.hud .start {
+    position: absolute;
+    --button-width: 150px;
+    --button-height: 40px;
+    width: var(--button-width);
+    left: calc(50% - (var(--button-width) / 2));
+    top: calc(50% - (var(--button-height) / 2));
+    background: hsla(0, 0%, 0%, 0.5);
+    opacity: 1;
+}
+
+.hud {
+    position: absolute;
+    width: calc(100% - 40px);
+    height: calc(100% - 40px);
+    margin: 20px;
+    top: 0;
+}
+
+.hud a, .hud a:visited {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.hud a:hover {
+    text-decoration: underline;
+}
+
+.hud .box dl {
+    display: grid;
+    grid-template-columns: auto auto;
+    margin: 0;
+    padding: 6px;
+}
+
+.hud .box dl > * {
+    padding: 6px;
+    margin: 0;
+    text-align: left;
+}
+
+.hud .help {
+    top: 0;
+    left: 0;
+}
+
+.hud .acknowledgement {
+    top: 0;
+    right: 0;
+    /* XXX: To make visible on XR. z-index of canvas is set to 9999 by  */
+    z-index: 10000;
+}
+
+.hud .controller {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr 1fr 1fr;
+    grid-gap: 6px;
+}
+
+.hud .controller button {
+    display: block;
+    padding: 24px 6px;
+    background: hsla(0, 0%, 0%, 0.3);
+    opacity: 0.5;
+}
