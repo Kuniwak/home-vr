@@ -63,7 +63,6 @@ export class EventLoop {
 
         this.dom.window.addEventListener('resize', this.handleResize);
         this.handleResize();
-        this.stopwatch.start();
         this.dollyView.start();
 
         this.animation.setAnimationLoop(() => {
@@ -77,7 +76,6 @@ export class EventLoop {
             this.homeView.update();
 
             this.renderer.render();
-            this.stopwatch.lap();
         });
     }
 }
