@@ -1,12 +1,12 @@
 import {Euler} from "three";
 import {DOM} from "../DOM/DOM";
-import {IInput} from "./IInput";
+import {IInput, DeltaEuler} from "./IInput";
 import {EulerDraggable} from "./EulerDraggable";
 
 
 export class TouchInput implements IInput {
-    get cameraEuler(): Readonly<Euler> {
-        return this.touchEulerInput.cameraEuler;
+    get rotation(): DeltaEuler | Euler {
+        return this.touchEulerInput.rotDelta;
     }
 
     get forwardForce(): number {
@@ -64,18 +64,20 @@ export class TouchInput implements IInput {
 }
 
 class TouchEulerInput {
-    get cameraEuler(): Readonly<Euler> {
-        return this.eulerDraggable.cameraEuler;
+    get rotDelta(): DeltaEuler {
+        return this.eulerDraggable.rotDelta;
     }
 
     private readonly handleTouchStart: (ev: TouchEvent) => void;
     private readonly handleTouchMove: (ev: TouchEvent) => void;
     private readonly handleTouchEnd: (ev: TouchEvent) => void;
     private readonly handleTouchCancel: (ev: TouchEvent) => void;
-    private readonly eulerDraggable: EulerDraggable = new EulerDraggable(1/400);
+    private readonly eulerDraggable: EulerDraggable;
 
 
     constructor(private readonly dom: DOM) {
+        this.eulerDraggable = new EulerDraggable(1 / 400);
+
         this.handleTouchStart = (ev: TouchEvent) => {
             ev.stopPropagation();
             ev.preventDefault();

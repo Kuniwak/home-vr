@@ -11,7 +11,7 @@ export class DollyController {
     }
 
     update() {
-        this.dollyModel.move(this.input.cameraEuler, this.input.forwardForce, this.input.verticalForce, this.stopwatch.timeDeltaMSec);
+        this.dollyModel.move(this.input.rotation, this.input.forwardForce, this.input.verticalForce, this.stopwatch.timeDeltaMSec);
         if (this.input.shouldMoveTo1F) {
             this.dollyModel.moveTo1F();
         } else if (this.input.shouldMoveTo2F) {

@@ -1,8 +1,9 @@
 import {Euler, Vector3} from "three";
-import {BASE_FPS, HEIGHT_2F} from "../../../Const";
+import {BASE_FPS, ENTRANCE_POSITION, HEIGHT_2F} from "../../../Const";
+import {DeltaEuler} from "../../../InputMapping/IInput";
 
 export interface IDollyModelInput {
-    move(rotation: Euler, forwardStrength: number, verticalStrength: number, timeDeltaMSec: number): void;
+    move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, timeDeltaMSec: number): void;
 
     moveTo1F(): void;
 
@@ -14,23 +15,58 @@ export interface IDollyModelOutput {
 }
 
 export interface IReadonlyDollyState {
-    readonly rotation: Readonly<Euler>;
+    readonly rotationX: Readonly<number>;
+    readonly rotationY: Readonly<number>;
     readonly position: Readonly<Vector3>
+
+    clone(): IReadonlyDollyState;
+
+    equals(other: IReadonlyDollyState): boolean;
 }
 
-export class DollyState {
+export class DollyState implements IReadonlyDollyState {
     constructor(
-        public rotation: Euler,
+        public rotationX: number,
+        public rotationY: number,
         public position: Vector3,
     ) {
+    }
+
+    clone(): DollyState {
+        return new DollyState(this.rotationX, this.rotationY, this.position.clone());
+    }
+
+    equals(other: IReadonlyDollyState): boolean {
+        return this.rotationX === other.rotationX && this.rotationY === other.rotationY && this.position.equals(other.position);
+    }
+
+    encodeTo(params: URLSearchParams): void {
+        params.set('posX', this.position.x.toString());
+        params.set('posY', this.position.y.toString());
+        params.set('posZ', this.position.z.toString());
+        params.set('rotX', this.rotationX.toString());
+        params.set('rotY', this.rotationY.toString());
+    }
+
+    static decodeFrom(params: URLSearchParams): DollyState {
+        return new DollyState(
+            parseFloat(params.get('rotX') || "0"),
+            parseFloat(params.get('rotY') || "0"),
+            new Vector3(
+                parseFloat(params.get('posX') || ENTRANCE_POSITION.x.toString()),
+                parseFloat(params.get('posY') || ENTRANCE_POSITION.y.toString()),
+                parseFloat(params.get('posZ') || ENTRANCE_POSITION.z.toString()),
+            ),
+        );
     }
 }
 
 export class DollyModel implements IDollyModelInput, IDollyModelOutput {
-    private readonly tmp: Vector3 = new Vector3();
-    private static readonly initVector: Readonly<Vector3> = new Vector3(0, 0, 1);
+    private readonly tmpVector3: Vector3 = new Vector3();
+    private readonly tmpEuler: Euler = new Euler(0, 0, 0, 'YXZ');
+    private static readonly initVector: Readonly<Vector3> = new Vector3(0, 0, -1);
 
-    get state(): IReadonlyDollyState {
+    get state(): DollyState {
         return this._state;
     }
 
@@ -41,13 +77,22 @@ export class DollyModel implements IDollyModelInput, IDollyModelOutput {
     ) {
     }
 
-    move(rotation: Euler, forwardStrength: number, verticalStrength: number, timeDeltaMSec: number) {
+    move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, timeDeltaMSec: number) {
+        if (rotation instanceof DeltaEuler) {
+            this._state.rotationX += rotation.x;
+            this._state.rotationY += rotation.y;
+        } else {
+            this._state.rotationX = rotation.x;
+            this._state.rotationY = rotation.y;
+        }
+        this.tmpEuler.x = this._state.rotationX;
+        this.tmpEuler.y = this._state.rotationY;
+
         const timeFactor = timeDeltaMSec / 1000 * BASE_FPS;
-        this.tmp.copy(DollyModel.initVector).applyEuler(rotation);
-        this.tmp.multiplyScalar(this.forwardVelocity * forwardStrength * timeFactor);
-        this.tmp.y = this.verticalVelocity * verticalStrength * timeFactor;
-        this._state.position.add(this.tmp);
-        this._state.rotation.copy(rotation);
+        this.tmpVector3.copy(DollyModel.initVector).applyEuler(this.tmpEuler);
+        this.tmpVector3.multiplyScalar(this.forwardVelocity * forwardStrength * timeFactor);
+        this.tmpVector3.y = this.verticalVelocity * verticalStrength * timeFactor;
+        this._state.position.add(this.tmpVector3);
     }
 
     moveTo1F(): void {

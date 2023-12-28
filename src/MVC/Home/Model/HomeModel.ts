@@ -1,7 +1,3 @@
-export const DOOR_OPENED_CLOSET_CLOSED: true = true;
-export const DOOR_CLOSED_CLOSET_OPENED: false = false;
-export type HomeState = typeof DOOR_OPENED_CLOSET_CLOSED | typeof DOOR_CLOSED_CLOSET_OPENED;
-
 export interface IHomeModelInput {
     openDoor(): void;
     closeDoor(): void;
@@ -11,6 +7,32 @@ export interface IHomeModelOutput {
     readonly state: HomeState;
 }
 
+export interface IReadonlyHomeState {
+    readonly doorOpened: boolean;
+    clone(): IReadonlyHomeState;
+    equals(other: IReadonlyHomeState): boolean;
+}
+
+export class HomeState implements IReadonlyHomeState {
+    constructor(public doorOpened: boolean) {}
+
+    clone(): HomeState {
+        return new HomeState(this.doorOpened);
+    }
+
+    equals(other: IReadonlyHomeState): boolean {
+        return this.doorOpened === other.doorOpened;
+    }
+
+    encodeTo(params: URLSearchParams): void {
+        params.set('doorOpened', this.doorOpened ? "1" : "0");
+    }
+
+    static decodeFrom(params: URLSearchParams): HomeState {
+        return new HomeState(params.get('doorOpened') !== "0");
+    }
+}
+
 export class HomeModel implements IHomeModelInput, IHomeModelOutput {
     constructor(
         public state: HomeState,
@@ -18,10 +40,10 @@ export class HomeModel implements IHomeModelInput, IHomeModelOutput {
     }
 
     openDoor() {
-        this.state = DOOR_OPENED_CLOSET_CLOSED;
+        this.state.doorOpened = true;
     }
 
     closeDoor() {
-        this.state = DOOR_CLOSED_CLOSET_OPENED;
+        this.state.doorOpened = false;
     }
 }

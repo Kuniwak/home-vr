@@ -1,28 +1,30 @@
-import {Euler, Vector2} from "three";
+import {Vector2} from "three";
+import {DeltaEuler} from "./IInput";
 
 export class EulerDraggable {
-    get cameraEuler(): Readonly<Euler> {
-        return this.cameraEulerMutable;
+    get rotDelta(): DeltaEuler {
+        return this._rotDelta;
     }
-
-    private readonly cameraEulerMutable: Euler = new Euler(0, 0, 0, 'YXZ');
+    private readonly _rotDelta: DeltaEuler = new DeltaEuler(0, 0);
     private readonly current: Vector2 = new Vector2();
 
-    constructor(private readonly sensitivity: number) {}
+    constructor(
+        private readonly sensitivity: number,
+    ) {}
 
     onDragStart(x: number, y: number) {
         this.current.set(x, y);
     }
 
     onDragMove(x: number, y: number) {
-        const deltaX = this.current.x - x;
-        const deltaY = this.current.y - y;
-        this.cameraEulerMutable.y -= deltaX * this.sensitivity;
-        this.cameraEulerMutable.x -= deltaY * this.sensitivity;
+        this._rotDelta.x = (y - this.current.y) * this.sensitivity;
+        this._rotDelta.y = (x - this.current.x) * this.sensitivity;
         this.current.set(x, y);
     }
 
     onDragEnd() {
+        this._rotDelta.x = 0;
+        this._rotDelta.y = 0;
         this.current.set(0, 0);
     }
 }

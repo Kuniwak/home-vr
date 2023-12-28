@@ -1,4 +1,4 @@
-import {Window} from "./Window";
+import {Window} from "../DOMTestable/Window";
 
 export function getDOM() {
     const canvas = document.querySelector('canvas.main') as HTMLCanvasElement | null;

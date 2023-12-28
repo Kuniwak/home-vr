@@ -1,9 +1,12 @@
 import {IXRSessionFactory} from "../IXRSessionFactory";
 import {Euler, Object3D} from "three";
-import {IInput} from "./IInput";
+import {IInput, DeltaEuler} from "./IInput";
 
 export class XRInput implements IInput {
-    public cameraEuler: Euler;
+    get rotation(): DeltaEuler | Euler {
+        return this._rotation;
+    }
+
     public forwardForce: number = 0;
     public verticalForce: number = 0;
     public shouldMoveTo1F: boolean = false;
@@ -11,12 +14,12 @@ export class XRInput implements IInput {
     public shouldOpenDoor: boolean = false;
     public shouldCloseDoor: boolean = false;
     public readonly shouldPause: boolean = false;
+    private readonly _rotation: Euler = new Euler(0, 0, 0, 'YXZ');
 
     constructor(
         private readonly xrsFactory: IXRSessionFactory,
         private readonly camera: Object3D,
     ) {
-        this.cameraEuler = camera.rotation;
     }
 
     start() {
@@ -29,7 +32,7 @@ export class XRInput implements IInput {
     }
 
     private updateByCamera() {
-        this.cameraEuler = this.camera.rotation;
+        this._rotation.copy(this.camera.rotation);
     }
 
     private updateByGamepad() {

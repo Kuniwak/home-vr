@@ -10,7 +10,7 @@ export class HomeView {
     }
 
     update() {
-        if (this.homeModel.state) {
+        if (this.homeModel.state.doorOpened) {
             this.doorOpened.visible = true;
             this.doorClosed.visible = false;
         } else {

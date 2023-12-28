@@ -37,6 +37,7 @@ import {VRButtonFactory} from "./IVRButtonFactory";
 import {ResizableEffectComposer} from "./Object3DCollection/ResizableEffectComposer";
 
 import {WebXRAwareEffectComposerRenderable} from "./WebXRAwareEffectComposerRenderable";
+import {Object3DCollection} from "./Object3DCollection/Object3DCollection";
 
 export async function load(env: Env, canvas: HTMLCanvasElement) {
     const loader = new GLTFLoader();
@@ -83,6 +84,7 @@ export async function load(env: Env, canvas: HTMLCanvasElement) {
 
     const camera = new PerspectiveCamera(50, 800 / 600);
     camera.lookAt(0, 0, 0);
+    camera.position.set(0, BODY_HEIGHT, 0);
 
     const composer = new EffectComposer(renderer, {multisampling: 8});
     const normalPass = new NormalPass(scene, camera);
@@ -115,16 +117,9 @@ export async function load(env: Env, canvas: HTMLCanvasElement) {
 
     const renderable = new WebXRAwareEffectComposerRenderable(composer, renderer, camera);
 
-    const dollyHead = new Object3D();
-    const dollyBody = new Object3D();
-    dollyHead.position.set(0, env === "XR" ? 0 : BODY_HEIGHT, 0);
-    dollyBody.add(dollyHead);
-
-    dollyHead.add(camera);
-    dollyHead.rotateY(env == "XR" ? Math.PI : 0);
-    dollyBody.rotateY(env == "XR" ? 0 : Math.PI);
-    dollyBody.position.copy(ENTRANCE_POSITION);
-    scene.add(dollyBody);
+    const dolly = new Object3D();
+    dolly.add(camera);
+    scene.add(dolly);
 
     scene.add(new AmbientLight(0xffffff, 2));
 
@@ -132,14 +127,15 @@ export async function load(env: Env, canvas: HTMLCanvasElement) {
     l2.position.set(-0.7, 0.2, 0.2);
     scene.add(l2);
 
+    const object3DCollection: Object3DCollection = {
+        homeDoorOpened: doorOpened,
+        homeDoorClosed: doorClosed,
+        dolly,
+        camera,
+    };
+
     return {
-        object3DCollection: {
-            homeDoorOpened: doorOpened,
-            homeDoorClosed: doorClosed,
-            dollyHead,
-            dollyBody,
-            camera,
-        },
+        object3DCollection,
         renderable,
         resizable: new ComposedResizable([
             new ResizableEffectComposer(composer),

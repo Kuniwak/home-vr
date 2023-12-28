@@ -5,7 +5,7 @@ import {IXRSessionFactory} from "../IXRSessionFactory";
 import {MouseAndKeyboardInput} from "./MouseAndKeyboardInput";
 import {TouchInput} from "./TouchInput";
 import {XRInput} from "./XRInput";
-import {IInput} from "./IInput";
+import {IInput, DeltaEuler} from "./IInput";
 
 export class Input implements IInput {
     private readonly input: IInput;
@@ -14,8 +14,8 @@ export class Input implements IInput {
         this.input = Input.createInput(env, dom, camera, xrsFactory);
     }
 
-    get cameraEuler(): Euler {
-        return this.input.cameraEuler;
+    get rotation(): DeltaEuler | Euler {
+        return this.input.rotation;
     }
 
     get forwardForce(): number {

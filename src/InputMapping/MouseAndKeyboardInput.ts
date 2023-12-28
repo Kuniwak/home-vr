@@ -1,6 +1,6 @@
 import {Euler} from "three";
-import {IInput} from "./IInput";
-import {Window} from "../DOM/Window";
+import {IInput, DeltaEuler} from "./IInput";
+import {Window} from "../DOMTestable/Window";
 import {EulerDraggable} from "./EulerDraggable";
 
 class PauseButtonInput {
@@ -25,8 +25,8 @@ class PauseButtonInput {
 }
 
 export class MouseAndKeyboardInput implements IInput {
-    get cameraEuler(): Readonly<Euler> {
-        return this.eulerDraggable.cameraEuler;
+    get rotation(): DeltaEuler | Euler {
+        return this.eulerDraggable.rotDelta;
     }
 
     public forwardForce: number = 0;
@@ -45,11 +45,12 @@ export class MouseAndKeyboardInput implements IInput {
     private readonly handleKeyDown: (ev: KeyboardEvent) => void;
     private readonly handleKeyUp: (ev: KeyboardEvent) => void;
     private readonly pauseButtonInput: PauseButtonInput;
-    private readonly eulerDraggable: EulerDraggable = new EulerDraggable(1/800);
+    private readonly eulerDraggable: EulerDraggable;
     private isDragging = false;
 
     constructor(private readonly window: Window) {
         this.pauseButtonInput = new PauseButtonInput(window);
+        this.eulerDraggable = new EulerDraggable(1/800);
 
         this.handleMouseDown = (ev: MouseEvent) => {
             ev.stopPropagation();
