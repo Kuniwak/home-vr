@@ -1,6 +1,6 @@
-import {EffectComposer} from "postprocessing";
-import {PerspectiveCamera, Vector2, WebGLRenderer} from "three";
-import {IRenderable} from "./IRenderable";
+import {EffectComposer} from 'postprocessing';
+import {PerspectiveCamera, Vector2, WebGLRenderer} from 'three';
+import {IRenderable} from './IRenderable';
 
 export class WebXRAwareEffectComposerRenderable implements IRenderable {
     private readonly bufferSize = new Vector2();

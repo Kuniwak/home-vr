@@ -1,5 +1,5 @@
-import {WebGLRenderer} from "three";
-import {VRButton} from "three/examples/jsm/webxr/VRButton.js";
+import {WebGLRenderer} from 'three';
+import {VRButton} from 'three/examples/jsm/webxr/VRButton.js';
 
 export interface IVRButtonFactory {
     createButton(): HTMLElement;

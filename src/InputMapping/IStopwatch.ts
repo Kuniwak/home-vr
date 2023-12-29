@@ -1,4 +1,4 @@
-import {BASE_FPS} from "../Const";
+import {BASE_FPS} from '../Const';
 
 export interface IStopwatch extends IStopwatchInput, IStopwatchOutput {
     start(): void;

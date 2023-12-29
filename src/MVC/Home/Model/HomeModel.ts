@@ -25,11 +25,11 @@ export class HomeState implements IReadonlyHomeState {
     }
 
     encodeTo(params: URLSearchParams): void {
-        params.set('doorOpened', this.doorOpened ? "1" : "0");
+        params.set('doorOpened', this.doorOpened ? '1' : '0');
     }
 
     static decodeFrom(params: URLSearchParams): HomeState {
-        return new HomeState(params.get('doorOpened') !== "0");
+        return new HomeState(params.get('doorOpened') !== '0');
     }
 }
 

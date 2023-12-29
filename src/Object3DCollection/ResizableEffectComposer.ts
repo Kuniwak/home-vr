@@ -1,5 +1,5 @@
-import {IResizable} from "../IResizable";
-import {EffectComposer} from "postprocessing";
+import {IResizable} from '../IResizable';
+import {EffectComposer} from 'postprocessing';
 
 export class ResizableEffectComposer implements IResizable {
     constructor(private readonly composer: EffectComposer) {

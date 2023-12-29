@@ -1,10 +1,10 @@
-import {getDOM} from "./DOM/DOM";
-import {EventLoop} from "./EventLoop";
-import {detectEnv} from "./EnvDetection";
-import {load} from "./Loader";
-import {Input} from "./InputMapping/Input";
-import {Stopwatch} from "./InputMapping/IStopwatch";
-import {Program} from "./MVC/Program";
+import {getDOM} from './DOM/DOM';
+import {EventLoop} from './EventLoop';
+import {detectEnv} from './EnvDetection';
+import {load} from './Loader';
+import {Input} from './InputMapping/Input';
+import {Stopwatch} from './InputMapping/IStopwatch';
+import {Program} from './MVC/Program';
 
 main();
 

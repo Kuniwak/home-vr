@@ -1,5 +1,5 @@
-import {IInput} from "../../../InputMapping/IInput";
-import {IHomeModelInput} from "../Model/HomeModel";
+import {IInput} from '../../../InputMapping/IInput';
+import {IHomeModelInput} from '../Model/HomeModel';
 
 export class HomeController {
     constructor(

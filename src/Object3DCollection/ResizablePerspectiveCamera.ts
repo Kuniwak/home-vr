@@ -1,5 +1,5 @@
-import {PerspectiveCamera} from "three";
-import {IResizable} from "../IResizable";
+import {PerspectiveCamera} from 'three';
+import {IResizable} from '../IResizable';
 
 export class ResizablePerspectiveCamera implements IResizable {
     constructor(private readonly camera: PerspectiveCamera) {

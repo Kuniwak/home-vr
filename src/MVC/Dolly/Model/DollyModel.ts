@@ -1,6 +1,7 @@
-import {Euler, Vector3} from "three";
-import {BASE_FPS, ENTRANCE_POSITION, HEIGHT_2F} from "../../../Const";
-import {DeltaEuler} from "../../../InputMapping/IInput";
+import {Euler, Vector3} from 'three';
+import {BASE_FPS, HEIGHT_2F} from '../../../Const';
+import {DeltaEuler} from '../../../InputMapping/IInput';
+import {ProgramState} from '../../Program';
 
 export interface IDollyModelInput {
     move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, timeDeltaMSec: number): void;
@@ -50,12 +51,12 @@ export class DollyState implements IReadonlyDollyState {
 
     static decodeFrom(params: URLSearchParams): DollyState {
         return new DollyState(
-            parseFloat(params.get('rotX') || "0"),
-            parseFloat(params.get('rotY') || "0"),
+            parseFloat(params.get('rotX') || ProgramState.DEFAULT.dolly.rotationX.toString()),
+            parseFloat(params.get('rotY') || ProgramState.DEFAULT.dolly.rotationY.toString()),
             new Vector3(
-                parseFloat(params.get('posX') || ENTRANCE_POSITION.x.toString()),
-                parseFloat(params.get('posY') || ENTRANCE_POSITION.y.toString()),
-                parseFloat(params.get('posZ') || ENTRANCE_POSITION.z.toString()),
+                parseFloat(params.get('posX') || ProgramState.DEFAULT.dolly.position.x.toString()),
+                parseFloat(params.get('posY') || ProgramState.DEFAULT.dolly.position.y.toString()),
+                parseFloat(params.get('posZ') || ProgramState.DEFAULT.dolly.position.z.toString()),
             ),
         );
     }

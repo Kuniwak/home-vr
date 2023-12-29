@@ -1,6 +1,6 @@
-import {IXRSessionFactory} from "../IXRSessionFactory";
-import {Euler, Object3D} from "three";
-import {IInput, DeltaEuler} from "./IInput";
+import {IXRSessionFactory} from '../IXRSessionFactory';
+import {Euler, Object3D} from 'three';
+import {IInput, DeltaEuler} from './IInput';
 
 export class XRInput implements IInput {
     get rotation(): DeltaEuler | Euler {
@@ -32,7 +32,9 @@ export class XRInput implements IInput {
     }
 
     private updateByCamera() {
+        console.log(this.camera.rotation, this.camera.position);
         this._rotation.copy(this.camera.rotation);
+        this._rotation.reorder('YXZ');
     }
 
     private updateByGamepad() {

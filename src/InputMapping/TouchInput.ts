@@ -1,7 +1,7 @@
-import {Euler} from "three";
-import {DOM} from "../DOM/DOM";
-import {IInput, DeltaEuler} from "./IInput";
-import {EulerDraggable} from "./EulerDraggable";
+import {Euler} from 'three';
+import {DOM} from '../DOM/DOM';
+import {IInput, DeltaEuler} from './IInput';
+import {EulerDraggable} from './EulerDraggable';
 
 
 export class TouchInput implements IInput {
@@ -140,9 +140,9 @@ class TouchButtonInput {
     }
 
     start() {
-        this.button.addEventListener("touchstart", this.handleTouchStart);
-        this.button.addEventListener("touchmove", this.handleTouchMove);
-        this.button.addEventListener("touchend", this.handleTouchEnd);
-        this.button.addEventListener("touchcancel", this.handleTouchCancel);
+        this.button.addEventListener('touchstart', this.handleTouchStart);
+        this.button.addEventListener('touchmove', this.handleTouchMove);
+        this.button.addEventListener('touchend', this.handleTouchEnd);
+        this.button.addEventListener('touchcancel', this.handleTouchCancel);
     }
 }

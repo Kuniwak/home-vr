@@ -1,5 +1,5 @@
-import {Vector2} from "three";
-import {DeltaEuler} from "./IInput";
+import {Vector2} from 'three';
+import {DeltaEuler} from './IInput';
 
 export class EulerDraggable {
     get rotDelta(): DeltaEuler {

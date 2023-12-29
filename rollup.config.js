@@ -1,11 +1,12 @@
 import Typescript from '@rollup/plugin-typescript';
 import {nodeResolve} from '@rollup/plugin-node-resolve';
 
+// noinspection JSUnusedGlobalSymbols
 export default async () => {
 	return {
 		input: 'src/index.ts',
 		output: {
-			file: `public/bundle.js`,
+			file: 'public/bundle.js',
 			format: 'umd',
 			name: 'HomeVr',
 		},

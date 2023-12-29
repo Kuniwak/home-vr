@@ -1,9 +1,9 @@
-import {IDollyModelOutput} from "../Model/DollyModel";
-import {Object3D} from "three";
-import {Env} from "../../../EnvDetection";
-import {DOM} from "../../../DOM/DOM";
-import {IVRButtonFactory} from "../../../IVRButtonFactory";
-import {BODY_HEIGHT} from "../../../Const";
+import {IDollyModelOutput} from '../Model/DollyModel';
+import {Object3D} from 'three';
+import {Env} from '../../../EnvDetection';
+import {DOM} from '../../../DOM/DOM';
+import {IVRButtonFactory} from '../../../IVRButtonFactory';
+import {BODY_HEIGHT} from '../../../Const';
 
 export interface IDollyView {
     start(): void;
@@ -42,11 +42,11 @@ export class DollyView {
         vrButtonFactory: IVRButtonFactory,
     ): IDollyView {
         switch (env) {
-            case "MOUSE":
+            case 'MOUSE':
                 return new MouseAndKeyboardDollyView(dom, dollyModelOutput, dolly, camera);
-            case "TOUCH":
+            case 'TOUCH':
                 return new TouchDollyView(dom, dollyModelOutput, dolly, camera);
-            case "XR":
+            case 'XR':
                 return new XRDollyView(dom, dollyModelOutput, dolly, camera, vrButtonFactory);
         }
     }
@@ -62,7 +62,7 @@ class MouseAndKeyboardDollyView implements IDollyView {
     }
 
     start(): void {
-        this.dom.help.classList.remove("hidden");
+        this.dom.help.classList.remove('hidden');
         this.update();
     }
 
@@ -83,7 +83,7 @@ class TouchDollyView implements IDollyView {
     }
 
     start(): void {
-        this.dom.controller.classList.remove("hidden");
+        this.dom.controller.classList.remove('hidden');
         this.update();
     }
 
@@ -110,11 +110,12 @@ class XRDollyView implements IDollyView {
         this.camera.position.y = BODY_HEIGHT;
         this.camera.rotation.x = this.dollyModelOutput.state.rotationX;
         this.dolly.position.copy(this.dollyModelOutput.state.position);
-        this.dolly.rotation.y = this.dollyModelOutput.state.rotationY;
+        this.dolly.rotation.y = this.dollyModelOutput.state.rotationY + Math.PI;
     }
 
     update(): void {
         this.dolly.position.copy(this.dollyModelOutput.state.position);
+        this.dolly.rotation.y = this.dollyModelOutput.state.rotationY + Math.PI;
         // NOTE: In XR, the rotation is handled by WebXRAwareEffectComposerRenderable.
     }
 }

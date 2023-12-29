@@ -1,27 +1,27 @@
-import {IInput} from "../InputMapping/IInput";
-import {BASE_FPS, ENTRANCE_POSITION, FORWARD_VELOCITY, VERTICAL_VELOCITY} from "../Const";
-import {DollyController} from "./Dolly/Controller/DollyController";
-import {HomeModel, HomeState, IReadonlyHomeState} from "./Home/Model/HomeModel";
-import {HomeController} from "./Home/Controller/HomeController";
-import {DOM} from "../DOM/DOM";
-import {IAnimationLoop} from "../IAnimationLoop";
-import {HomeView} from "./Home/View/HomeView";
-import {Object3DCollection} from "../Object3DCollection/Object3DCollection";
-import {DollyView} from "./Dolly/View/DollyView";
-import {IRenderable} from "../IRenderable";
-import {IResizable} from "../IResizable";
-import {Env} from "../EnvDetection";
-import {IStopwatch} from "../InputMapping/IStopwatch";
-import {IVRButtonFactory} from "../IVRButtonFactory";
-import {DollyModel, DollyState, IReadonlyDollyState} from "./Dolly/Model/DollyModel";
-import {Location} from "../DOMTestable/Location";
-import {throttle} from "../Throttle";
+import {IInput} from '../InputMapping/IInput';
+import {BASE_FPS, ENTRANCE_POSITION, FORWARD_VELOCITY, VERTICAL_VELOCITY} from '../Const';
+import {DollyController} from './Dolly/Controller/DollyController';
+import {HomeModel, HomeState, IReadonlyHomeState} from './Home/Model/HomeModel';
+import {HomeController} from './Home/Controller/HomeController';
+import {DOM} from '../DOM/DOM';
+import {IAnimationLoop} from '../IAnimationLoop';
+import {HomeView} from './Home/View/HomeView';
+import {Object3DCollection} from '../Object3DCollection/Object3DCollection';
+import {DollyView} from './Dolly/View/DollyView';
+import {IRenderable} from '../IRenderable';
+import {IResizable} from '../IResizable';
+import {Env} from '../EnvDetection';
+import {IStopwatch} from '../InputMapping/IStopwatch';
+import {IVRButtonFactory} from '../IVRButtonFactory';
+import {DollyModel, DollyState, IReadonlyDollyState} from './Dolly/Model/DollyModel';
+import {Location} from '../DOMTestable/Location';
+import {throttle} from '../Throttle';
 
 
 interface IReadonlyProgramState {
     readonly dolly: IReadonlyDollyState;
     readonly home: IReadonlyHomeState;
-    clone(): IReadonlyProgramState;
+    clone(): ProgramState;
     equals(other: IReadonlyProgramState): boolean;
     encodeTo(params: URLSearchParams): any;
 }
@@ -33,7 +33,7 @@ export class ProgramState implements IReadonlyProgramState {
     ) {
     }
 
-    clone(): IReadonlyProgramState {
+    clone(): ProgramState {
         return new ProgramState(this.dolly.clone(), this.home.clone());
     }
 
@@ -52,6 +52,15 @@ export class ProgramState implements IReadonlyProgramState {
             HomeState.decodeFrom(params),
         );
     }
+
+    static readonly DEFAULT: IReadonlyProgramState = new ProgramState(
+        new DollyState(
+            0,
+            Math.PI,
+            ENTRANCE_POSITION,
+        ),
+        new HomeState(true),
+    );
 }
 
 
@@ -100,9 +109,13 @@ export class Program {
         };
 
         this.updateURL = throttle(() => {
+            if (this.state.equals(ProgramState.DEFAULT)) {
+                history.replaceState(null, '', '');
+                return;
+            }
             const params = new URLSearchParams();
             this.state.encodeTo(params);
-            history.replaceState(null, "", "?" + params.toString());
+            history.replaceState(null, '', '?' + params.toString());
         }, Math.ceil(BASE_FPS / 2))
     }
 
@@ -129,14 +142,7 @@ export class Program {
             return ProgramState.decodeFrom(<URLSearchParams>url.searchParams);
         } catch (e) {
             console.error(e);
-            return new ProgramState(
-                new DollyState(
-                    0,
-                    0,
-                    ENTRANCE_POSITION,
-                ),
-                new HomeState(true),
-            );
+            return ProgramState.DEFAULT.clone();
         }
     }
 }

@@ -1,7 +1,7 @@
-import {Euler} from "three";
-import {IInput, DeltaEuler} from "./IInput";
-import {Window} from "../DOMTestable/Window";
-import {EulerDraggable} from "./EulerDraggable";
+import {Euler} from 'three';
+import {IInput, DeltaEuler} from './IInput';
+import {Window} from '../DOMTestable/Window';
+import {EulerDraggable} from './EulerDraggable';
 
 class PauseButtonInput {
     get shouldPause() {
@@ -133,9 +133,9 @@ export class MouseAndKeyboardInput implements IInput {
 
     start() {
         this.pauseButtonInput.start();
-        this.window.addEventListener("mousedown", this.handleMouseDown);
-        this.window.addEventListener("mousemove", this.handleMouseMove);
-        this.window.addEventListener("mouseup", this.handleMouseUp);
+        this.window.addEventListener('mousedown', this.handleMouseDown);
+        this.window.addEventListener('mousemove', this.handleMouseMove);
+        this.window.addEventListener('mouseup', this.handleMouseUp);
         this.window.addEventListener('keydown', this.handleKeyDown);
         this.window.addEventListener('keyup', this.handleKeyUp);
     }

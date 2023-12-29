@@ -1,8 +1,8 @@
-import {IStopwatch} from "./InputMapping/IStopwatch";
-import {IInput} from "./InputMapping/IInput";
-import {IAnimationLoop} from "./IAnimationLoop";
-import {IRenderable} from "./IRenderable";
-import {Program} from "./MVC/Program";
+import {IStopwatch} from './InputMapping/IStopwatch';
+import {IInput} from './InputMapping/IInput';
+import {IAnimationLoop} from './IAnimationLoop';
+import {IRenderable} from './IRenderable';
+import {Program} from './MVC/Program';
 
 export class EventLoop {
 

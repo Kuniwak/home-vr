@@ -1,4 +1,4 @@
-import {Group, Object3D} from "three";
+import {Group, Object3D} from 'three';
 
 export type Object3DCollection = {
     readonly dolly: Object3D;

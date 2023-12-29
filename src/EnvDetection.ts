@@ -1,15 +1,15 @@
-export type Env = "XR" | "MOUSE" | "TOUCH"
+export type Env = 'XR' | 'MOUSE' | 'TOUCH'
 
 export async function detectEnv(): Promise<Env> {
     if (await isXR()) {
-        return "XR";
+        return 'XR';
     }
 
-    return isTouch() ? "TOUCH" : "MOUSE";
+    return isTouch() ? 'TOUCH' : 'MOUSE';
 }
 
 function isTouch(): boolean {
-    return "ontouchstart" in window;
+    return 'ontouchstart' in window;
 }
 
 async function isXR(): Promise<boolean> {

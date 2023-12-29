@@ -1,6 +1,6 @@
-import {IInput} from "../../../InputMapping/IInput";
-import {IDollyModelInput} from "../Model/DollyModel";
-import {IStopwatchOutput} from "../../../InputMapping/IStopwatch";
+import {IInput} from '../../../InputMapping/IInput';
+import {IDollyModelInput} from '../Model/DollyModel';
+import {IStopwatchOutput} from '../../../InputMapping/IStopwatch';
 
 export class DollyController {
     constructor(

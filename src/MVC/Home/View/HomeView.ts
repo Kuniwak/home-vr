@@ -1,5 +1,5 @@
-import {Group} from "three";
-import {IHomeModelOutput} from "../Model/HomeModel";
+import {Group} from 'three';
+import {IHomeModelOutput} from '../Model/HomeModel';
 
 export class HomeView {
     constructor(

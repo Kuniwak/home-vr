@@ -1,4 +1,4 @@
-import {Euler} from "three";
+import {Euler} from 'three';
 
 export class DeltaEuler {
     constructor(
