@@ -1,5 +1,5 @@
 import {IInput} from '../InputMapping/IInput';
-import {FORWARD_VELOCITY, VERTICAL_VELOCITY} from '../Const';
+import {FORWARD_VELOCITY, VERTICAL_VELOCITY, SIDEWAYS_VELOCITY} from '../Const';
 import {DollyController} from './Dolly/Controller/DollyController';
 import {HomeModel, HomeState, IReadonlyHomeState} from './Home/Model/HomeModel';
 import {HomeController} from './Home/Controller/HomeController';
@@ -90,7 +90,7 @@ export class Program {
         private readonly location: Location,
     ) {
         const initialState = Program.initialState(location);
-        this.dollyModel = new DollyModel(initialState.dolly, FORWARD_VELOCITY, VERTICAL_VELOCITY);
+        this.dollyModel = new DollyModel(initialState.dolly, FORWARD_VELOCITY, VERTICAL_VELOCITY, SIDEWAYS_VELOCITY);
         this.dollyController = new DollyController(input, stopwatch, this.dollyModel);
         this.dollyView = new DollyView(env, dom, this.dollyModel, obj3Ds.dolly, obj3Ds.camera, vrButtonFactory);
 

@@ -1,7 +1,8 @@
 import {Euler} from 'three';
 import {DOM} from '../DOM/DOM';
-import {IInput, DeltaEuler} from './IInput';
+import {IInput} from './IInput';
 import {EulerDraggable} from './EulerDraggable';
+import {DeltaEuler} from "./DeltaEuler";
 
 
 export class TouchInput implements IInput {
@@ -14,6 +15,7 @@ export class TouchInput implements IInput {
     }
 
     public readonly verticalForce = 0;
+    public readonly sidewaysForce = 0;
 
     get shouldMoveTo1F(): boolean {
         return this.moveTo1FButton.isPressed;

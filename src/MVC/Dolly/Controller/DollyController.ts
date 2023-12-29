@@ -15,13 +15,21 @@ export class DollyController {
 
         if (this.input.shouldReset) {
             this.dollyModel.reset();
-        } else {
-            this.dollyModel.move(this.input.rotation, this.input.forwardForce, this.input.verticalForce, this.stopwatch.timeDeltaMSec);
+        }
+        else {
+            this.dollyModel.move(
+                this.input.rotation,
+                this.input.forwardForce,
+                this.input.verticalForce,
+                this.input.sidewaysForce,
+                this.stopwatch.timeDeltaMSec
+            );
         }
 
         if (this.input.shouldMoveTo1F) {
             this.dollyModel.moveTo1F();
-        } else if (this.input.shouldMoveTo2F) {
+        }
+        else if (this.input.shouldMoveTo2F) {
             this.dollyModel.moveTo2F();
         }
     }

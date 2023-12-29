@@ -1,17 +1,10 @@
 import {Euler} from 'three';
-
-export class DeltaEuler {
-    public readonly isEuler: false = false;
-
-    constructor(
-        public x: number,
-        public y: number,
-    ) {}
-}
+import {DeltaEuler} from "./DeltaEuler";
 
 export interface IInput {
     readonly rotation: Readonly<DeltaEuler> | Readonly<Euler>;
     readonly forwardForce: number;
+    readonly sidewaysForce: number;
     readonly verticalForce: number;
     readonly shouldReset: boolean;
     readonly shouldMoveTo1F: boolean;

@@ -1,5 +1,6 @@
-import {DeltaEuler, IInput} from "./IInput";
+import {IInput} from "./IInput";
 import {Euler} from "three";
+import {DeltaEuler} from "./DeltaEuler";
 
 export class CompositeInput implements IInput {
     private static readonly DELTA_EULER_ZERO: Readonly<DeltaEuler> = new DeltaEuler(0, 0);
@@ -8,10 +9,9 @@ export class CompositeInput implements IInput {
     }
 
     get forwardForce(): number {
-        // NOTE: It is faster than Math.max(...this.inputs.map(input => input.forwardForce)).
         let max = 0;
         for (const input of this.inputs) {
-            if (input.forwardForce > max) max = input.forwardForce;
+            if (Math.abs(input.forwardForce) > Math.abs(max)) max = input.forwardForce;
         }
         return max;
     }
@@ -64,6 +64,14 @@ export class CompositeInput implements IInput {
         let max = 0;
         for (const input of this.inputs) {
             if (Math.abs(input.verticalForce) > Math.abs(max)) max = input.verticalForce;
+        }
+        return max;
+    }
+
+    get sidewaysForce(): number {
+        let max = 0;
+        for (const input of this.inputs) {
+            if (Math.abs(input.sidewaysForce) > Math.abs(max)) max = input.sidewaysForce;
         }
         return max;
     }

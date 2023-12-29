@@ -5,9 +5,10 @@ import {IXRSessionFactory} from '../IXRSessionFactory';
 import {KeyboardInput} from './KeyboardInput';
 import {TouchInput} from './TouchInput';
 import {XRInput} from './XRInput';
-import {IInput, DeltaEuler} from './IInput';
+import {IInput} from './IInput';
 import {CompositeInput} from "./CompositeInput";
 import {MouseInput} from "./MouseInput";
+import {DeltaEuler} from "./DeltaEuler";
 
 export class Input implements IInput {
     private readonly input: IInput;
@@ -26,6 +27,10 @@ export class Input implements IInput {
 
     get verticalForce(): number {
         return this.input.verticalForce;
+    }
+
+    get sidewaysForce(): number {
+        return this.input.sidewaysForce;
     }
 
     get shouldMoveTo1F(): boolean {

@@ -1,20 +1,22 @@
-import {DeltaEuler, IInput} from "./IInput";
-import {Euler} from "three";
-import {EulerDraggable} from "./EulerDraggable";
-import {Window} from "../DOMTestable/Window";
+import {IInput} from './IInput';
+import {Euler} from 'three';
+import {EulerDraggable} from './EulerDraggable';
+import {Window} from '../DOMTestable/Window';
+import {DeltaEuler} from "./DeltaEuler";
 
 export class MouseInput implements IInput {
     get rotation(): DeltaEuler | Euler {
         return this.eulerDraggable.rotDelta;
     }
 
-    public readonly forwardForce: number = 0;
-    public readonly verticalForce: number = 0;
-    public readonly shouldReset: boolean = false;
-    public readonly shouldCloseDoor: boolean = false;
-    public readonly shouldMoveTo1F: boolean = false;
-    public readonly shouldMoveTo2F: boolean = false;
-    public readonly shouldOpenDoor: boolean = false;
+    readonly forwardForce: number = 0;
+    readonly verticalForce: number = 0;
+    readonly sidewaysForce: number = 0;
+    readonly shouldReset: boolean = false;
+    readonly shouldCloseDoor: boolean = false;
+    readonly shouldMoveTo1F: boolean = false;
+    readonly shouldMoveTo2F: boolean = false;
+    readonly shouldOpenDoor: boolean = false;
 
     private readonly handleMouseDown: (ev: MouseEvent) => void;
     private readonly handleMouseMove: (ev: MouseEvent) => void;

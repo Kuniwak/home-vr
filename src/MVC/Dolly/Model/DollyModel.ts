@@ -1,13 +1,12 @@
 import {Euler, Vector3} from 'three';
 import {BASE_FPS, ENTRANCE_POSITION, HEIGHT_2F} from '../../../Const';
-import {DeltaEuler} from '../../../InputMapping/IInput';
-import {ProgramState} from '../../Program';
-import {StateQueryParams} from "../../StateQueryParams";
+import {StateQueryParams} from '../../StateQueryParams';
+import {DeltaEuler} from '../../../InputMapping/DeltaEuler';
 
 export interface IDollyModelInput {
     update(): void;
 
-    move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, timeDeltaMSec: number): void;
+    move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, sidewaysStrength: number, timeDeltaMSec: number): void;
 
     reset(): void;
 
@@ -74,12 +73,16 @@ export class DollyState implements IReadonlyDollyState {
 }
 
 export class DollyModel implements IDollyModelInput, IDollyModelOutput {
-    private readonly tmpVector3: Vector3 = new Vector3();
+    private readonly tmpForward: Vector3 = new Vector3();
+    private readonly tmpSideways: Vector3 = new Vector3();
+    private readonly tmpVertical: Vector3 = new Vector3();
     private readonly tmpEuler: Euler = new Euler(0, 0, 0, 'YXZ');
     private _hasChanged: boolean = false;
 
     // NOTE: Three.js is in y-up right-handed coordinate system.
-    private static readonly initVector: Readonly<Vector3> = new Vector3(0, 0, -1);
+    private static readonly forward: Readonly<Vector3> = new Vector3(0, 0, -1);
+    private static readonly sideways: Readonly<Vector3> = new Vector3(1, 0, 0);
+    private static readonly vertical: Readonly<Vector3> = new Vector3(0, 1, 0);
 
     get state(): DollyState {
         return this._state;
@@ -93,6 +96,7 @@ export class DollyModel implements IDollyModelInput, IDollyModelOutput {
         private _state: DollyState,
         private readonly forwardVelocity: number,
         private readonly verticalVelocity: number,
+        private readonly sidewaysVelocity: number,
     ) {
     }
 
@@ -106,7 +110,7 @@ export class DollyModel implements IDollyModelInput, IDollyModelOutput {
         this._hasChanged = true;
     }
 
-    move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, timeDeltaMSec: number) {
+    move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, sidewaysStrength: number, timeDeltaMSec: number) {
         if (rotation instanceof DeltaEuler) {
             if (rotation.x !== 0 || rotation.y !== 0) this._hasChanged = true;
             this._state.rotationX += rotation.x;
@@ -123,10 +127,19 @@ export class DollyModel implements IDollyModelInput, IDollyModelOutput {
 
         if (forwardStrength !== 0 || verticalStrength !== 0) this._hasChanged = true;
         const timeFactor = timeDeltaMSec / 1000 * BASE_FPS;
-        this.tmpVector3.copy(DollyModel.initVector).applyEuler(this.tmpEuler);
-        this.tmpVector3.multiplyScalar(this.forwardVelocity * forwardStrength * timeFactor);
-        this.tmpVector3.y = this.verticalVelocity * verticalStrength * timeFactor;
-        this._state.position.add(this.tmpVector3);
+
+        this.tmpForward.copy(DollyModel.forward).applyEuler(this.tmpEuler);
+        this.tmpForward.multiplyScalar(this.forwardVelocity * forwardStrength * timeFactor);
+        this.tmpForward.y = 0;
+
+        this.tmpSideways.copy(DollyModel.sideways).applyEuler(this.tmpEuler);
+        this.tmpSideways.multiplyScalar(this.sidewaysVelocity * sidewaysStrength * timeFactor);
+        this.tmpSideways.y = 0;
+
+        this.tmpVertical.copy(DollyModel.vertical);
+        this.tmpVertical.y = this.verticalVelocity * verticalStrength * timeFactor;
+
+        this._state.position.add(this.tmpForward).add(this.tmpSideways).add(this.tmpVertical);
     }
 
     moveTo1F(): void {

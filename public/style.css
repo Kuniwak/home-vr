@@ -86,11 +86,8 @@ button {
     left: 0;
 }
 
-.hud .acknowledgement {
-    top: 0;
-    right: 0;
-    /* XXX: To make visible on XR. z-index of canvas is set to 9999 by  */
-    z-index: 10000;
+.hud .help dt {
+    text-align: right;
 }
 
 .hud .controller {

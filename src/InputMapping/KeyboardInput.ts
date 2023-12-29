@@ -1,11 +1,13 @@
-import {DeltaEuler, IInput} from './IInput';
-import {DOM} from "../DOM/DOM";
+import {IInput} from './IInput';
+import {DOM} from '../DOM/DOM';
+import {DeltaEuler} from "./DeltaEuler";
 
 export class KeyboardInput implements IInput {
     readonly rotation: DeltaEuler = new DeltaEuler(0, 0);
 
     forwardForce: number = 0;
     verticalForce: number = 0;
+    sidewaysForce: number = 0;
     shouldReset: boolean = false;
     shouldCloseDoor: boolean = false;
     shouldMoveTo1F: boolean = false;
@@ -22,6 +24,15 @@ export class KeyboardInput implements IInput {
             switch (ev.key) {
             case 'w':
                 this.forwardForce = 1;
+                return;
+            case 'a':
+                this.sidewaysForce = -1;
+                return;
+            case 's':
+                this.forwardForce = -1;
+                return;
+            case 'd':
+                this.sidewaysForce = 1;
                 return;
             case '0':
                 this.shouldReset = true;
@@ -53,6 +64,15 @@ export class KeyboardInput implements IInput {
             switch (ev.key) {
             case 'w':
                 this.forwardForce = 0;
+                return;
+            case 'a':
+                this.sidewaysForce = 0;
+                return;
+            case 's':
+                this.forwardForce = 0;
+                return;
+            case 'd':
+                this.sidewaysForce = 0;
                 return;
             case '0':
                 this.shouldReset = false;
@@ -106,11 +126,12 @@ export class KeyboardInput implements IInput {
 
     private reset() {
         this.forwardForce = 0;
+        this.verticalForce = 0;
+        this.sidewaysForce = 0;
         this.shouldReset = false;
         this.shouldMoveTo1F = false;
         this.shouldMoveTo2F = false;
         this.shouldOpenDoor = false;
         this.shouldCloseDoor = false;
-        this.verticalForce = 0;
     }
 }
