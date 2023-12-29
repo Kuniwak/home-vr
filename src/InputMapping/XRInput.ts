@@ -51,6 +51,11 @@ export class XRInput implements IInput {
             this.shouldMoveTo1F = r.buttons[0].pressed;
             this.shouldMoveTo2F = r.buttons[1].pressed;
         }
+        else {
+            this.verticalForce = 0;
+            this.shouldMoveTo1F = false;
+            this.shouldMoveTo2F = false;
+        }
 
         const l = xrs.inputSources[1].gamepad;
         if (l) {
@@ -58,6 +63,11 @@ export class XRInput implements IInput {
             this.forwardForce = Math.max(-l.axes[3], 0);
             this.shouldOpenDoor = l.buttons[0].pressed;
             this.shouldCloseDoor = l.buttons[1].pressed;
+        }
+        else {
+            this.forwardForce = 0;
+            this.shouldOpenDoor = false;
+            this.shouldCloseDoor = false;
         }
     }
 }
