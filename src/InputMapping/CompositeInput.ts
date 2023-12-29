@@ -63,7 +63,7 @@ export class CompositeInput implements IInput {
     get verticalForce(): number {
         let max = 0;
         for (const input of this.inputs) {
-            if (Math.abs(input.verticalForce) > max) max = Math.abs(input.verticalForce);
+            if (Math.abs(input.verticalForce) > Math.abs(max)) max = input.verticalForce;
         }
         return max;
     }
