@@ -32,6 +32,6 @@ export class StateQueryParams {
             StateQueryParams.AMP + StateQueryParams.POS_Z_NAME + StateQueryParams.EQ + this.posZ.toFixed(StateQueryParams.POS_PRECISION) +
             StateQueryParams.AMP + StateQueryParams.ROT_X_NAME + StateQueryParams.EQ + this.rotX.toFixed(StateQueryParams.ROT_PRECISION) +
             StateQueryParams.AMP + StateQueryParams.ROT_Y_NAME + StateQueryParams.EQ + this.rotY.toFixed(StateQueryParams.ROT_PRECISION) +
-            StateQueryParams.DOOR_OPENED_NAME + StateQueryParams.EQ + (this.doorOpened ? StateQueryParams.ONE : StateQueryParams.ZERO);
+            StateQueryParams.AMP + StateQueryParams.DOOR_OPENED_NAME + StateQueryParams.EQ + (this.doorOpened ? StateQueryParams.ONE : StateQueryParams.ZERO);
     }
 }
