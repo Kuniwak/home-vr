@@ -85,9 +85,9 @@ export async function load(env: Env, canvas: HTMLCanvasElement) {
     scene.add(dolly);
 
     const camera = new PerspectiveCamera(50, 800 / 600);
-    camera.rotation.reorder('YXZ');
-    dolly.add(camera);
+    camera.rotation.set(0, 0, 0, 'YXZ');
     camera.position.set(0, BODY_HEIGHT, 0);
+    dolly.add(camera);
 
     const composer = new EffectComposer(renderer, {multisampling: 8});
     const normalPass = new NormalPass(scene, camera);

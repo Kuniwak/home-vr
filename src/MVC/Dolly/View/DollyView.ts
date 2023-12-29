@@ -108,11 +108,11 @@ class XRDollyView implements IDollyView {
         this.dom.body.appendChild(this.vrButtonFactory.createButton());
 
         this.dolly.position.copy(this.dollyModelOutput.state.position);
-        this.dolly.rotation.y = this.dollyModelOutput.state.rotationY;
 
         // NOTE: Simulate the height and rotation of the user's head before entering XR.
         this.camera.position.y = BODY_HEIGHT;
         this.camera.rotation.x = this.dollyModelOutput.state.rotationX;
+        this.camera.rotation.y = this.dollyModelOutput.state.rotationY;
     }
 
     update(): void {
