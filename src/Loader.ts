@@ -5,7 +5,7 @@ import {
     SKY_COLOR, HOME_MODEL_URL
 } from "./Const";
 import {
-    AmbientLight,
+    AmbientLight, AxesHelper,
     BackSide,
     Color,
     DirectionalLight,
@@ -81,8 +81,12 @@ export async function load(env: Env, canvas: HTMLCanvasElement) {
         canvas: canvas,
     });
 
+    const dolly = new Object3D();
+    scene.add(dolly);
+
     const camera = new PerspectiveCamera(50, 800 / 600);
-    camera.lookAt(0, 0, 0);
+    camera.rotation.reorder('YXZ');
+    dolly.add(camera);
     camera.position.set(0, BODY_HEIGHT, 0);
 
     const composer = new EffectComposer(renderer, {multisampling: 8});
@@ -115,10 +119,6 @@ export async function load(env: Env, canvas: HTMLCanvasElement) {
     composer.addPass(new EffectPass(camera, ssaoEffect, textureEffect));
 
     const renderable = new WebXRAwareEffectComposerRenderable(composer, renderer, camera);
-
-    const dolly = new Object3D();
-    dolly.add(camera);
-    scene.add(dolly);
 
     scene.add(new AmbientLight(0xffffff, 2));
 

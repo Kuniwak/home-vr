@@ -9,6 +9,8 @@ export class HomeController {
     }
 
     update() {
+        this.homeModel.update();
+
         if (this.input.shouldReset) {
             this.homeModel.reset();
         } else if (this.input.shouldOpenDoor) {

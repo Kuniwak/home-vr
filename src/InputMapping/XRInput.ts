@@ -33,7 +33,6 @@ export class XRInput implements IInput {
 
     private updateByCamera() {
         this._rotation.copy(this.camera.rotation);
-        this._rotation.reorder('YXZ');
     }
 
     private updateByGamepad() {

@@ -11,6 +11,8 @@ export class DollyController {
     }
 
     update() {
+        this.dollyModel.update();
+
         if (this.input.shouldReset) {
             this.dollyModel.reset();
         } else {

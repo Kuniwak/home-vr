@@ -1,10 +1,14 @@
 import {Euler, Vector3} from 'three';
-import {BASE_FPS, HEIGHT_2F} from '../../../Const';
+import {BASE_FPS, ENTRANCE_POSITION, HEIGHT_2F} from '../../../Const';
 import {DeltaEuler} from '../../../InputMapping/IInput';
 import {ProgramState} from '../../Program';
+import {StateQueryParams} from "../../StateQueryParams";
 
 export interface IDollyModelInput {
+    update(): void;
+
     move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, timeDeltaMSec: number): void;
+
     reset(): void;
 
     moveTo1F(): void;
@@ -14,6 +18,7 @@ export interface IDollyModelInput {
 
 export interface IDollyModelOutput {
     readonly state: IReadonlyDollyState;
+    readonly hasChanged: boolean;
 }
 
 export interface IReadonlyDollyState {
@@ -24,6 +29,8 @@ export interface IReadonlyDollyState {
     clone(): DollyState;
 
     equals(other: IReadonlyDollyState): boolean;
+
+    encodeTo(urlSearchParams: StateQueryParams): void;
 }
 
 export class DollyState implements IReadonlyDollyState {
@@ -39,37 +46,47 @@ export class DollyState implements IReadonlyDollyState {
     }
 
     equals(other: IReadonlyDollyState): boolean {
-        return this.rotationX === other.rotationX && this.rotationY === other.rotationY && this.position.equals(other.position);
+        return this.rotationX === other.rotationX && this.rotationY === other.rotationY
+            && this.position.equals(other.position);
     }
 
-    encodeTo(params: URLSearchParams): void {
-        params.set('posX', this.position.x.toString());
-        params.set('posY', this.position.y.toString());
-        params.set('posZ', this.position.z.toString());
-        params.set('rotX', this.rotationX.toString());
-        params.set('rotY', this.rotationY.toString());
+    encodeTo(params: StateQueryParams): void {
+        params.posX = this.position.x;
+        params.posY = this.position.y;
+        params.posZ = this.position.z;
+        params.rotX = this.rotationX;
+        params.rotY = this.rotationY;
     }
 
     static decodeFrom(params: URLSearchParams): DollyState {
         return new DollyState(
-            parseFloat(params.get('rotX') || ProgramState.DEFAULT.dolly.rotationX.toString()),
-            parseFloat(params.get('rotY') || ProgramState.DEFAULT.dolly.rotationY.toString()),
+            parseFloat(params.get('rotX') || DollyState.DEFAULT.rotationX.toString()),
+            parseFloat(params.get('rotY') || DollyState.DEFAULT.rotationY.toString()),
             new Vector3(
-                parseFloat(params.get('posX') || ProgramState.DEFAULT.dolly.position.x.toString()),
-                parseFloat(params.get('posY') || ProgramState.DEFAULT.dolly.position.y.toString()),
-                parseFloat(params.get('posZ') || ProgramState.DEFAULT.dolly.position.z.toString()),
+                parseFloat(params.get('posX') || DollyState.DEFAULT.position.x.toString()),
+                parseFloat(params.get('posY') || DollyState.DEFAULT.position.y.toString()),
+                parseFloat(params.get('posZ') || DollyState.DEFAULT.position.z.toString()),
             ),
         );
     }
+
+    static readonly DEFAULT: IReadonlyDollyState = new DollyState(0, 0, ENTRANCE_POSITION);
 }
 
 export class DollyModel implements IDollyModelInput, IDollyModelOutput {
     private readonly tmpVector3: Vector3 = new Vector3();
     private readonly tmpEuler: Euler = new Euler(0, 0, 0, 'YXZ');
+    private _hasChanged: boolean = false;
+
+    // NOTE: Three.js is in y-up right-handed coordinate system.
     private static readonly initVector: Readonly<Vector3> = new Vector3(0, 0, -1);
 
     get state(): DollyState {
         return this._state;
+    }
+
+    get hasChanged(): boolean {
+        return this._hasChanged;
     }
 
     constructor(
@@ -79,21 +96,32 @@ export class DollyModel implements IDollyModelInput, IDollyModelOutput {
     ) {
     }
 
+    update() {
+        this._hasChanged = false;
+    }
+
     reset(): void {
+        if (this._state.equals(DollyState.DEFAULT)) return;
         this._state = ProgramState.DEFAULT.dolly.clone();
+        this._hasChanged = true;
     }
 
     move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, timeDeltaMSec: number) {
         if (rotation instanceof DeltaEuler) {
+            if (rotation.x !== 0 || rotation.y !== 0) this._hasChanged = true;
             this._state.rotationX += rotation.x;
             this._state.rotationY += rotation.y;
-        } else {
+        }
+        else {
+            if (this._state.rotationX !== rotation.x || this._state.rotationY !== rotation.y) this._hasChanged =
+                true;
             this._state.rotationX = rotation.x;
             this._state.rotationY = rotation.y;
         }
         this.tmpEuler.x = this._state.rotationX;
         this.tmpEuler.y = this._state.rotationY;
 
+        if (forwardStrength !== 0 || verticalStrength !== 0) this._hasChanged = true;
         const timeFactor = timeDeltaMSec / 1000 * BASE_FPS;
         this.tmpVector3.copy(DollyModel.initVector).applyEuler(this.tmpEuler);
         this.tmpVector3.multiplyScalar(this.forwardVelocity * forwardStrength * timeFactor);

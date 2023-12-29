@@ -1,5 +1,5 @@
 import {IInput} from '../InputMapping/IInput';
-import {BASE_FPS, ENTRANCE_POSITION, FORWARD_VELOCITY, VERTICAL_VELOCITY} from '../Const';
+import {FORWARD_VELOCITY, VERTICAL_VELOCITY} from '../Const';
 import {DollyController} from './Dolly/Controller/DollyController';
 import {HomeModel, HomeState, IReadonlyHomeState} from './Home/Model/HomeModel';
 import {HomeController} from './Home/Controller/HomeController';
@@ -15,7 +15,11 @@ import {IStopwatch} from '../InputMapping/IStopwatch';
 import {IVRButtonFactory} from '../IVRButtonFactory';
 import {DollyModel, DollyState, IReadonlyDollyState} from './Dolly/Model/DollyModel';
 import {Location} from '../DOMTestable/Location';
-import {throttle} from '../Throttle';
+import {StateQueryParams} from "./StateQueryParams";
+import {DollyStasisModel} from "./Dolly/Model/DollyStasisModel";
+import {DollyStasisView} from "./Dolly/View/DollyStasisView";
+import {History} from "../DOMTestable/History";
+import {DollyStasisController} from "./Dolly/Controller/DollyStasisController";
 
 
 interface IReadonlyProgramState {
@@ -23,7 +27,7 @@ interface IReadonlyProgramState {
     readonly home: IReadonlyHomeState;
     clone(): ProgramState;
     equals(other: IReadonlyProgramState): boolean;
-    encodeTo(params: URLSearchParams): any;
+    encodeTo(params: StateQueryParams): any;
 }
 
 export class ProgramState implements IReadonlyProgramState {
@@ -38,11 +42,10 @@ export class ProgramState implements IReadonlyProgramState {
     }
 
     equals(other: IReadonlyProgramState): boolean {
-        console.log(this, other, this.dolly.equals(other.dolly), this.home.equals(other.home));
         return this.dolly.equals(other.dolly) && this.home.equals(other.home);
     }
 
-    encodeTo(params: URLSearchParams): any {
+    encodeTo(params: StateQueryParams): void {
         this.dolly.encodeTo(params);
         this.home.encodeTo(params);
     }
@@ -55,12 +58,8 @@ export class ProgramState implements IReadonlyProgramState {
     }
 
     static readonly DEFAULT: IReadonlyProgramState = new ProgramState(
-        new DollyState(
-            0,
-            Math.PI,
-            ENTRANCE_POSITION,
-        ),
-        new HomeState(true),
+        DollyState.DEFAULT.clone(),
+        HomeState.DEFAULT.clone(),
     );
 }
 
@@ -73,7 +72,9 @@ export class Program {
     private readonly homeController: HomeController;
     private readonly homeView: HomeView;
     private readonly handleResize: () => void;
-    private readonly updateURL: () => void;
+    private readonly dollyStasisModel: DollyStasisModel;
+    private readonly dollyStasisView: DollyStasisView;
+    private readonly dollyStasisController: DollyStasisController;
 
     get state(): IReadonlyProgramState {
         return new ProgramState(
@@ -104,20 +105,14 @@ export class Program {
         this.homeController = new HomeController(input, this.homeModel);
         this.homeView = new HomeView(this.homeModel, obj3Ds.homeDoorOpened, obj3Ds.homeDoorClosed);
 
+        this.dollyStasisModel = new DollyStasisModel(this.dollyModel);
+        this.dollyStasisController = new DollyStasisController(this.dollyStasisModel);
+        this.dollyStasisView = new DollyStasisView(this.dollyModel, this.homeModel, this.dollyStasisModel, history);
+
         this.handleResize = () => {
             resizable.setSize(dom.window.innerWidth, dom.window.innerHeight);
             resizable.setPixelRatio(dom.window.devicePixelRatio);
         };
-
-        this.updateURL = throttle(() => {
-            if (this.state.equals(ProgramState.DEFAULT)) {
-                history.replaceState(null, '', '/');
-                return;
-            }
-            const params = new URLSearchParams();
-            this.state.encodeTo(params);
-            history.replaceState(null, '', '?' + params.toString());
-        }, Math.ceil(BASE_FPS / 2))
     }
 
     start() {
@@ -130,11 +125,11 @@ export class Program {
     update() {
         this.dollyController.update();
         this.homeController.update();
+        this.dollyStasisController.update();
 
         this.dollyView.update();
         this.homeView.update();
-
-        this.updateURL();
+        this.dollyStasisView.update()
     }
 
     private static initialState(location: Location): ProgramState {

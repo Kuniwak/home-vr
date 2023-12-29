@@ -68,8 +68,8 @@ class MouseAndKeyboardDollyView implements IDollyView {
 
     update(): void {
         this.camera.rotation.x = this.dollyModelOutput.state.rotationX;
+        this.camera.rotation.y = this.dollyModelOutput.state.rotationY;
         this.dolly.position.copy(this.dollyModelOutput.state.position);
-        this.dolly.rotation.y = this.dollyModelOutput.state.rotationY;
     }
 }
 
@@ -89,8 +89,8 @@ class TouchDollyView implements IDollyView {
 
     update(): void {
         this.camera.rotation.x = this.dollyModelOutput.state.rotationX;
+        this.camera.rotation.y = this.dollyModelOutput.state.rotationY;
         this.dolly.position.copy(this.dollyModelOutput.state.position);
-        this.dolly.rotation.y = this.dollyModelOutput.state.rotationY;
     }
 }
 
@@ -110,14 +110,13 @@ class XRDollyView implements IDollyView {
         this.dolly.position.copy(this.dollyModelOutput.state.position);
         this.dolly.rotation.y = this.dollyModelOutput.state.rotationY;
 
-        // NOTE: The camera position too low before XR session starts.
+        // NOTE: Simulate the height and rotation of the user's head before entering XR.
         this.camera.position.y = BODY_HEIGHT;
         this.camera.rotation.x = this.dollyModelOutput.state.rotationX;
     }
 
     update(): void {
         this.dolly.position.copy(this.dollyModelOutput.state.position);
-        this.dolly.rotation.y = this.dollyModelOutput.state.rotationY;
 
         // NOTE: In XR, the camera position and rotation are managed by WebXRAwareEffectComposerRenderable.
     }

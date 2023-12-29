@@ -2,10 +2,12 @@ import {Euler, Object3D} from 'three';
 import {Env} from '../EnvDetection';
 import {DOM} from '../DOM/DOM';
 import {IXRSessionFactory} from '../IXRSessionFactory';
-import {MouseAndKeyboardInput} from './MouseAndKeyboardInput';
+import {KeyboardInput} from './KeyboardInput';
 import {TouchInput} from './TouchInput';
 import {XRInput} from './XRInput';
 import {IInput, DeltaEuler} from './IInput';
+import {CompositeInput} from "./CompositeInput";
+import {MouseInput} from "./MouseInput";
 
 export class Input implements IInput {
     private readonly input: IInput;
@@ -57,11 +59,11 @@ export class Input implements IInput {
     private static createInput(env: Env, dom: DOM, camera: Object3D, xrsFactory: IXRSessionFactory): IInput {
         switch (env) {
             case 'MOUSE':
-                return new MouseAndKeyboardInput(dom.window);
+                return new CompositeInput([new MouseInput(dom.window), new KeyboardInput(dom)]);
             case 'TOUCH':
-                return new TouchInput(dom);
+                return new CompositeInput([new TouchInput(dom), new KeyboardInput(dom)]);
             case 'XR':
-                return new XRInput(xrsFactory, camera);
+                return new CompositeInput([new XRInput(xrsFactory, camera), new KeyboardInput(dom)]);
         }
     }
 }

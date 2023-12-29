@@ -1,6 +1,8 @@
 import {ProgramState} from "../../Program";
+import {StateQueryParams} from "../../StateQueryParams";
 
 export interface IHomeModelInput {
+    update(): void;
     openDoor(): void;
     closeDoor(): void;
     reset(): void;
@@ -8,6 +10,7 @@ export interface IHomeModelInput {
 
 export interface IHomeModelOutput {
     readonly state: HomeState;
+    readonly hasChanged: boolean;
 }
 
 export interface IReadonlyHomeState {
@@ -27,30 +30,48 @@ export class HomeState implements IReadonlyHomeState {
         return this.doorOpened === other.doorOpened;
     }
 
-    encodeTo(params: URLSearchParams): void {
-        params.set('doorOpened', this.doorOpened ? '1' : '0');
+    encodeTo(params: StateQueryParams): void {
+        params.doorOpened = this.doorOpened;
     }
 
     static decodeFrom(params: URLSearchParams): HomeState {
         return new HomeState(params.get('doorOpened') !== '0');
     }
+
+    static readonly DEFAULT: IReadonlyHomeState = new HomeState(true);
 }
 
 export class HomeModel implements IHomeModelInput, IHomeModelOutput {
+    get hasChanged(): boolean {
+        return this._hasChanged;
+    }
+
+    private _hasChanged = false;
+
     constructor(
         public state: HomeState,
     ) {
     }
 
+    update() {
+        this._hasChanged = false;
+    }
+
     reset() {
+        if (this.state.equals(ProgramState.DEFAULT.home)) return;
         this.state = ProgramState.DEFAULT.home.clone();
+        this._hasChanged = true;
     }
 
     openDoor() {
+        if (this.state.doorOpened) return;
         this.state.doorOpened = true;
+        this._hasChanged = true;
     }
 
     closeDoor() {
+        if (!this.state.doorOpened) return;
         this.state.doorOpened = false;
+        this._hasChanged = true;
     }
 }
