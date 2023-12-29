@@ -38,6 +38,7 @@ export class ProgramState implements IReadonlyProgramState {
     }
 
     equals(other: IReadonlyProgramState): boolean {
+        console.log(this, other, this.dolly.equals(other.dolly), this.home.equals(other.home));
         return this.dolly.equals(other.dolly) && this.home.equals(other.home);
     }
 
@@ -110,7 +111,7 @@ export class Program {
 
         this.updateURL = throttle(() => {
             if (this.state.equals(ProgramState.DEFAULT)) {
-                history.replaceState(null, '', '');
+                history.replaceState(null, '', '/');
                 return;
             }
             const params = new URLSearchParams();

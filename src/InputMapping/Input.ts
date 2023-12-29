@@ -42,8 +42,8 @@ export class Input implements IInput {
         return this.input.shouldCloseDoor;
     }
 
-    get shouldPause(): boolean {
-        return this.input.shouldPause;
+    get shouldReset(): boolean {
+        return this.input.shouldReset;
     }
 
     start() {

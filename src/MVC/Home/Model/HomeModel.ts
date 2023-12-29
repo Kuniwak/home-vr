@@ -1,6 +1,9 @@
+import {ProgramState} from "../../Program";
+
 export interface IHomeModelInput {
     openDoor(): void;
     closeDoor(): void;
+    reset(): void;
 }
 
 export interface IHomeModelOutput {
@@ -9,7 +12,7 @@ export interface IHomeModelOutput {
 
 export interface IReadonlyHomeState {
     readonly doorOpened: boolean;
-    clone(): IReadonlyHomeState;
+    clone(): HomeState;
     equals(other: IReadonlyHomeState): boolean;
 }
 
@@ -37,6 +40,10 @@ export class HomeModel implements IHomeModelInput, IHomeModelOutput {
     constructor(
         public state: HomeState,
     ) {
+    }
+
+    reset() {
+        this.state = ProgramState.DEFAULT.home.clone();
     }
 
     openDoor() {

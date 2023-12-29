@@ -31,7 +31,7 @@ export class TouchInput implements IInput {
         return this.closeButton.isPressed;
     }
 
-    public readonly shouldPause: boolean = false;
+    public readonly shouldReset: boolean = false;
 
     private readonly touchEulerInput: TouchEulerInput;
     private readonly forwardButton: TouchButtonInput;

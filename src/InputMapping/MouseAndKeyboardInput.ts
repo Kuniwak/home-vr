@@ -1,5 +1,5 @@
 import {Euler} from 'three';
-import {IInput, DeltaEuler} from './IInput';
+import {DeltaEuler, IInput} from './IInput';
 import {Window} from '../DOMTestable/Window';
 import {EulerDraggable} from './EulerDraggable';
 
@@ -31,10 +31,12 @@ export class MouseAndKeyboardInput implements IInput {
 
     public forwardForce: number = 0;
     public verticalForce: number = 0;
+    public shouldReset: boolean = false;
     public shouldCloseDoor: boolean = false;
     public shouldMoveTo1F: boolean = false;
     public shouldMoveTo2F: boolean = false;
     public shouldOpenDoor: boolean = false;
+
     get shouldPause(): boolean {
         return this.pauseButtonInput.shouldPause;
     }
@@ -50,7 +52,7 @@ export class MouseAndKeyboardInput implements IInput {
 
     constructor(private readonly window: Window) {
         this.pauseButtonInput = new PauseButtonInput(window);
-        this.eulerDraggable = new EulerDraggable(1/800);
+        this.eulerDraggable = new EulerDraggable(1 / 800);
 
         this.handleMouseDown = (ev: MouseEvent) => {
             ev.stopPropagation();
@@ -59,7 +61,7 @@ export class MouseAndKeyboardInput implements IInput {
             this.eulerDraggable.onDragStart(ev.pageX, ev.pageY);
         };
 
-        this.handleMouseMove = (ev: MouseEvent) =>{
+        this.handleMouseMove = (ev: MouseEvent) => {
             ev.stopPropagation();
             ev.preventDefault();
             if (this.isDragging) {
@@ -76,57 +78,63 @@ export class MouseAndKeyboardInput implements IInput {
 
         this.handleKeyDown = (ev: KeyboardEvent) => {
             switch (ev.key) {
-                case 'w':
-                    this.forwardForce = 1;
-                    return;
-                case '1':
-                    this.shouldMoveTo1F = true;
-                    return;
-                case '2':
-                    this.shouldMoveTo2F = true;
-                    return;
-                case '3':
-                    this.shouldOpenDoor = true;
-                    return;
-                case '4':
-                    this.shouldCloseDoor = true;
-                    return;
-                case 'ArrowUp':
-                    this.verticalForce = 1;
-                    return;
-                case 'ArrowDown':
-                    this.verticalForce = -1;
-                    return;
-                default:
-                    return;
+            case 'w':
+                this.forwardForce = 1;
+                return;
+            case '0':
+                this.shouldReset = true;
+                return;
+            case '1':
+                this.shouldMoveTo1F = true;
+                return;
+            case '2':
+                this.shouldMoveTo2F = true;
+                return;
+            case '3':
+                this.shouldOpenDoor = true;
+                return;
+            case '4':
+                this.shouldCloseDoor = true;
+                return;
+            case 'ArrowUp':
+                this.verticalForce = 1;
+                return;
+            case 'ArrowDown':
+                this.verticalForce = -1;
+                return;
+            default:
+                return;
             }
         }
 
         this.handleKeyUp = (ev: KeyboardEvent) => {
             switch (ev.key) {
-                case 'w':
-                    this.forwardForce = 0;
-                    return;
-                case '1':
-                    this.shouldMoveTo1F = false;
-                    return;
-                case '2':
-                    this.shouldMoveTo2F = false;
-                    return;
-                case '3':
-                    this.shouldOpenDoor = false;
-                    return;
-                case '4':
-                    this.shouldCloseDoor = false;
-                    return;
-                case 'ArrowUp':
-                    this.verticalForce = 0;
-                    return;
-                case 'ArrowDown':
-                    this.verticalForce = 0;
-                    return;
-                default:
-                    return;
+            case 'w':
+                this.forwardForce = 0;
+                return;
+            case '0':
+                this.shouldReset = false;
+                return;
+            case '1':
+                this.shouldMoveTo1F = false;
+                return;
+            case '2':
+                this.shouldMoveTo2F = false;
+                return;
+            case '3':
+                this.shouldOpenDoor = false;
+                return;
+            case '4':
+                this.shouldCloseDoor = false;
+                return;
+            case 'ArrowUp':
+                this.verticalForce = 0;
+                return;
+            case 'ArrowDown':
+                this.verticalForce = 0;
+                return;
+            default:
+                return;
             }
         };
     }

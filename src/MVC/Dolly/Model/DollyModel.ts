@@ -5,6 +5,7 @@ import {ProgramState} from '../../Program';
 
 export interface IDollyModelInput {
     move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, timeDeltaMSec: number): void;
+    reset(): void;
 
     moveTo1F(): void;
 
@@ -20,7 +21,7 @@ export interface IReadonlyDollyState {
     readonly rotationY: Readonly<number>;
     readonly position: Readonly<Vector3>
 
-    clone(): IReadonlyDollyState;
+    clone(): DollyState;
 
     equals(other: IReadonlyDollyState): boolean;
 }
@@ -72,10 +73,14 @@ export class DollyModel implements IDollyModelInput, IDollyModelOutput {
     }
 
     constructor(
-        private readonly _state: DollyState,
+        private _state: DollyState,
         private readonly forwardVelocity: number,
         private readonly verticalVelocity: number,
     ) {
+    }
+
+    reset(): void {
+        this._state = ProgramState.DEFAULT.dolly.clone();
     }
 
     move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, timeDeltaMSec: number) {

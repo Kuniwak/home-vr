@@ -13,7 +13,7 @@ export class XRInput implements IInput {
     public shouldMoveTo2F: boolean = false;
     public shouldOpenDoor: boolean = false;
     public shouldCloseDoor: boolean = false;
-    public readonly shouldPause: boolean = false;
+    public readonly shouldReset: boolean = false;
     private readonly _rotation: Euler = new Euler(0, 0, 0, 'YXZ');
 
     constructor(
@@ -32,7 +32,6 @@ export class XRInput implements IInput {
     }
 
     private updateByCamera() {
-        console.log(this.camera.rotation, this.camera.position);
         this._rotation.copy(this.camera.rotation);
         this._rotation.reorder('YXZ');
     }

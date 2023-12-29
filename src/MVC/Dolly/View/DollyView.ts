@@ -106,16 +106,19 @@ class XRDollyView implements IDollyView {
 
     start() {
         this.dom.body.appendChild(this.vrButtonFactory.createButton());
+
+        this.dolly.position.copy(this.dollyModelOutput.state.position);
+        this.dolly.rotation.y = this.dollyModelOutput.state.rotationY;
+
         // NOTE: The camera position too low before XR session starts.
         this.camera.position.y = BODY_HEIGHT;
         this.camera.rotation.x = this.dollyModelOutput.state.rotationX;
-        this.dolly.position.copy(this.dollyModelOutput.state.position);
-        this.dolly.rotation.y = this.dollyModelOutput.state.rotationY + Math.PI;
     }
 
     update(): void {
         this.dolly.position.copy(this.dollyModelOutput.state.position);
-        this.dolly.rotation.y = this.dollyModelOutput.state.rotationY + Math.PI;
-        // NOTE: In XR, the rotation is handled by WebXRAwareEffectComposerRenderable.
+        this.dolly.rotation.y = this.dollyModelOutput.state.rotationY;
+
+        // NOTE: In XR, the camera position and rotation are managed by WebXRAwareEffectComposerRenderable.
     }
 }
