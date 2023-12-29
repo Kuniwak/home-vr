@@ -1,7 +1,7 @@
 import {IInput} from '../InputMapping/IInput';
 import {FORWARD_VELOCITY, SIDEWAYS_VELOCITY, VERTICAL_VELOCITY} from '../Const';
 import {DollyController} from './Dolly/Controller/DollyController';
-import {HomeModel, HomeState, IReadonlyHomeState} from './Home/Model/HomeModel';
+import {HomeModel} from './Home/Model/HomeModel';
 import {HomeController} from './Home/Controller/HomeController';
 import {DOM} from '../DOM/DOM';
 import {IAnimationLoop} from '../IAnimationLoop';
@@ -22,6 +22,7 @@ import {History} from "../DOMTestable/History";
 import {DollyStasisController} from "./Dolly/Controller/DollyStasisController";
 import {DollyState, IReadonlyDollyState} from "./Dolly/Model/DollyState";
 import {DOLLY_STATE_MAP} from "./Dolly/Model/DOLLY_STATE_MAP";
+import {HomeState, IReadonlyHomeState} from './Home/Model/HomeState';
 
 
 interface IReadonlyProgramState {

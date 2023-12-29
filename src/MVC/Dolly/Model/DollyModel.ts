@@ -1,6 +1,5 @@
 import {Euler, Vector3} from 'three';
 import {BASE_FPS, HEIGHT_2F} from '../../../Const';
-import {StateQueryParams} from '../../StateQueryParams';
 import {DeltaEuler} from '../../../InputMapping/DeltaEuler';
 import {DollyState, IReadonlyDollyState} from "./DollyState";
 
