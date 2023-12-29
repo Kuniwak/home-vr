@@ -1,8 +1,9 @@
 import {IDollyStasisModelOutput} from "../Model/DollyStasisModel";
-import {DollyState, IDollyModelOutput} from "../Model/DollyModel";
+import {IDollyModelOutput} from "../Model/DollyModel";
 import {HomeState, IHomeModelOutput} from "../../Home/Model/HomeModel";
 import {StateQueryParams} from "../../StateQueryParams";
 import {History} from "../../../DOMTestable/History";
+import {DollyState} from "../Model/DollyState";
 
 export class DollyStasisView {
     private readonly urlSearchParams = new StateQueryParams();

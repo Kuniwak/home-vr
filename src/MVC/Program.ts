@@ -1,5 +1,5 @@
 import {IInput} from '../InputMapping/IInput';
-import {FORWARD_VELOCITY, VERTICAL_VELOCITY, SIDEWAYS_VELOCITY} from '../Const';
+import {FORWARD_VELOCITY, SIDEWAYS_VELOCITY, VERTICAL_VELOCITY} from '../Const';
 import {DollyController} from './Dolly/Controller/DollyController';
 import {HomeModel, HomeState, IReadonlyHomeState} from './Home/Model/HomeModel';
 import {HomeController} from './Home/Controller/HomeController';
@@ -13,20 +13,25 @@ import {IResizable} from '../IResizable';
 import {Env} from '../EnvDetection';
 import {IStopwatch} from '../InputMapping/IStopwatch';
 import {IVRButtonFactory} from '../IVRButtonFactory';
-import {DollyModel, DollyState, IReadonlyDollyState} from './Dolly/Model/DollyModel';
+import {DollyModel} from './Dolly/Model/DollyModel';
 import {Location} from '../DOMTestable/Location';
 import {StateQueryParams} from "./StateQueryParams";
 import {DollyStasisModel} from "./Dolly/Model/DollyStasisModel";
 import {DollyStasisView} from "./Dolly/View/DollyStasisView";
 import {History} from "../DOMTestable/History";
 import {DollyStasisController} from "./Dolly/Controller/DollyStasisController";
+import {DollyState, IReadonlyDollyState} from "./Dolly/Model/DollyState";
+import {DOLLY_STATE_MAP} from "./Dolly/Model/DOLLY_STATE_MAP";
 
 
 interface IReadonlyProgramState {
     readonly dolly: IReadonlyDollyState;
     readonly home: IReadonlyHomeState;
+
     clone(): ProgramState;
+
     equals(other: IReadonlyProgramState): boolean;
+
     encodeTo(params: StateQueryParams): any;
 }
 
@@ -126,10 +131,17 @@ export class Program {
     }
 
     private static initialState(location: Location): ProgramState {
+        const url = new URL(location.href);
+        if (url.searchParams.has("q")) {
+            const q = (url.searchParams.get("q") || "").toUpperCase();
+            return DOLLY_STATE_MAP.hasOwnProperty(q)
+                ? new ProgramState(DOLLY_STATE_MAP[q], new HomeState(true))
+                : ProgramState.DEFAULT.clone();
+        }
         try {
-            const url = new URL(location.href);
             return ProgramState.decodeFrom(<URLSearchParams>url.searchParams);
-        } catch (e) {
+        }
+        catch (e) {
             console.error(e);
             return ProgramState.DEFAULT.clone();
         }

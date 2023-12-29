@@ -1,7 +1,8 @@
 import {Euler, Vector3} from 'three';
-import {BASE_FPS, ENTRANCE_POSITION, HEIGHT_2F} from '../../../Const';
+import {BASE_FPS, HEIGHT_2F} from '../../../Const';
 import {StateQueryParams} from '../../StateQueryParams';
 import {DeltaEuler} from '../../../InputMapping/DeltaEuler';
+import {DollyState, IReadonlyDollyState} from "./DollyState";
 
 export interface IDollyModelInput {
     update(): void;
@@ -18,58 +19,6 @@ export interface IDollyModelInput {
 export interface IDollyModelOutput {
     readonly state: IReadonlyDollyState;
     readonly hasChanged: boolean;
-}
-
-export interface IReadonlyDollyState {
-    readonly rotationX: Readonly<number>;
-    readonly rotationY: Readonly<number>;
-    readonly position: Readonly<Vector3>
-
-    clone(): DollyState;
-
-    equals(other: IReadonlyDollyState): boolean;
-
-    encodeTo(urlSearchParams: StateQueryParams): void;
-}
-
-export class DollyState implements IReadonlyDollyState {
-    constructor(
-        public rotationX: number,
-        public rotationY: number,
-        public position: Vector3,
-    ) {
-    }
-
-    clone(): DollyState {
-        return new DollyState(this.rotationX, this.rotationY, this.position.clone());
-    }
-
-    equals(other: IReadonlyDollyState): boolean {
-        return this.rotationX === other.rotationX && this.rotationY === other.rotationY
-            && this.position.equals(other.position);
-    }
-
-    encodeTo(params: StateQueryParams): void {
-        params.posX = this.position.x;
-        params.posY = this.position.y;
-        params.posZ = this.position.z;
-        params.rotX = this.rotationX;
-        params.rotY = this.rotationY;
-    }
-
-    static decodeFrom(params: URLSearchParams): DollyState {
-        return new DollyState(
-            parseFloat(params.get('rotX') || DollyState.DEFAULT.rotationX.toString()),
-            parseFloat(params.get('rotY') || DollyState.DEFAULT.rotationY.toString()),
-            new Vector3(
-                parseFloat(params.get('posX') || DollyState.DEFAULT.position.x.toString()),
-                parseFloat(params.get('posY') || DollyState.DEFAULT.position.y.toString()),
-                parseFloat(params.get('posZ') || DollyState.DEFAULT.position.z.toString()),
-            ),
-        );
-    }
-
-    static readonly DEFAULT: IReadonlyDollyState = new DollyState(0, Math.PI, ENTRANCE_POSITION);
 }
 
 export class DollyModel implements IDollyModelInput, IDollyModelOutput {
@@ -125,7 +74,7 @@ export class DollyModel implements IDollyModelInput, IDollyModelOutput {
         this.tmpEuler.x = this._state.rotationX;
         this.tmpEuler.y = this._state.rotationY;
 
-        if (forwardStrength !== 0 || verticalStrength !== 0) this._hasChanged = true;
+        if (forwardStrength !== 0 || verticalStrength !== 0 || sidewaysStrength !== 0) this._hasChanged = true;
         const timeFactor = timeDeltaMSec / 1000 * BASE_FPS;
 
         this.tmpForward.copy(DollyModel.forward).applyEuler(this.tmpEuler);

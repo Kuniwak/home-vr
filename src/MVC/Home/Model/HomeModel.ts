@@ -1,5 +1,4 @@
-import {ProgramState} from "../../Program";
-import {StateQueryParams} from "../../StateQueryParams";
+import {StateQueryParams} from '../../StateQueryParams';
 
 export interface IHomeModelInput {
     update(): void;
