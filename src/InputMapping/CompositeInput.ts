@@ -2,6 +2,8 @@ import {DeltaEuler, IInput} from "./IInput";
 import {Euler} from "three";
 
 export class CompositeInput implements IInput {
+    private static readonly DELTA_EULER_ZERO: Readonly<DeltaEuler> = new DeltaEuler(0, 0);
+
     constructor(private readonly inputs: IInput[]) {
     }
 
@@ -14,16 +16,13 @@ export class CompositeInput implements IInput {
         return max;
     }
 
-    get rotation(): DeltaEuler | Euler {
+    get rotation(): Readonly<DeltaEuler> | Readonly<Euler> {
         for (const input of this.inputs) {
-            if (input.rotation instanceof DeltaEuler) {
-                return input.rotation;
-            }
-            if (input.rotation.x !== 0 || input.rotation.y !== 0) {
+            if (input.rotation.isEuler || input.rotation.x !== 0 || input.rotation.y !== 0) {
                 return input.rotation;
             }
         }
-        return new DeltaEuler(0, 0);
+        return CompositeInput.DELTA_EULER_ZERO;
     }
 
     get shouldCloseDoor(): boolean {

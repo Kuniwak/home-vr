@@ -70,7 +70,7 @@ export class DollyState implements IReadonlyDollyState {
         );
     }
 
-    static readonly DEFAULT: IReadonlyDollyState = new DollyState(0, 0, ENTRANCE_POSITION);
+    static readonly DEFAULT: IReadonlyDollyState = new DollyState(0, Math.PI, ENTRANCE_POSITION);
 }
 
 export class DollyModel implements IDollyModelInput, IDollyModelOutput {
@@ -102,7 +102,7 @@ export class DollyModel implements IDollyModelInput, IDollyModelOutput {
 
     reset(): void {
         if (this._state.equals(DollyState.DEFAULT)) return;
-        this._state = ProgramState.DEFAULT.dolly.clone();
+        this._state = DollyState.DEFAULT.clone();
         this._hasChanged = true;
     }
 

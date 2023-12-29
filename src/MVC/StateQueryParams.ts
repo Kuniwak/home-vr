@@ -9,27 +9,29 @@ export class StateQueryParams {
     ) {
     }
 
-    private static readonly posXName = 'posX';
-    private static readonly posYName = 'posY';
-    private static readonly posZName = 'posZ';
-    private static readonly rotXName = 'rotX';
-    private static readonly rotYName = 'rotY';
-    private static readonly doorOpenedName = 'doorOpened';
-    private static readonly eq = '=';
-    private static readonly amp = '&';
-    private static readonly q = '?';
-    private static readonly zero = '0';
-    private static readonly one = '1';
+    private static readonly POS_PRECISION = 3;
+    private static readonly ROT_PRECISION = 3;
+    private static readonly POS_X_NAME = 'posX';
+    private static readonly POS_Y_NAME = 'posY';
+    private static readonly POS_Z_NAME = 'posZ';
+    private static readonly ROT_X_NAME = 'rotX';
+    private static readonly ROT_Y_NAME = 'rotY';
+    private static readonly DOOR_OPENED_NAME = 'doorOpened';
+    private static readonly EQ = '=';
+    private static readonly AMP = '&';
+    private static readonly Q = '?';
+    private static readonly ZERO = '0';
+    private static readonly ONE = '1';
 
 
     toString(): string {
-        // NOTE: Do not use encodeURIComponent() here. It is unnecessary, and it can make much garbage and GC is critical here.
-        return StateQueryParams.q + StateQueryParams.posXName + StateQueryParams.eq + this.posX.toString() +
-            StateQueryParams.amp + StateQueryParams.posYName + StateQueryParams.eq + this.posY.toString() +
-            StateQueryParams.amp + StateQueryParams.posZName + StateQueryParams.eq + this.posZ.toString() +
-            StateQueryParams.amp + StateQueryParams.rotXName + StateQueryParams.eq + this.rotX.toString() +
-            StateQueryParams.amp + StateQueryParams.rotYName + StateQueryParams.eq + this.rotY.toString() +
-            StateQueryParams.doorOpenedName + StateQueryParams.eq + (this.doorOpened
-                ? StateQueryParams.one : StateQueryParams.zero);
+        // NOTE: Do not use encodeURIComponent() here. It is unnecessary, and it can make much garbage and GC is
+        // critical here.
+        return StateQueryParams.Q + StateQueryParams.POS_X_NAME + StateQueryParams.EQ + this.posX.toFixed(StateQueryParams.POS_PRECISION) +
+            StateQueryParams.AMP + StateQueryParams.POS_Y_NAME + StateQueryParams.EQ + this.posY.toFixed(StateQueryParams.POS_PRECISION) +
+            StateQueryParams.AMP + StateQueryParams.POS_Z_NAME + StateQueryParams.EQ + this.posZ.toFixed(StateQueryParams.POS_PRECISION) +
+            StateQueryParams.AMP + StateQueryParams.ROT_X_NAME + StateQueryParams.EQ + this.rotX.toFixed(StateQueryParams.ROT_PRECISION) +
+            StateQueryParams.AMP + StateQueryParams.ROT_Y_NAME + StateQueryParams.EQ + this.rotY.toFixed(StateQueryParams.ROT_PRECISION) +
+            StateQueryParams.DOOR_OPENED_NAME + StateQueryParams.EQ + (this.doorOpened ? StateQueryParams.ONE : StateQueryParams.ZERO);
     }
 }

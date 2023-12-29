@@ -76,13 +76,6 @@ export class Program {
     private readonly dollyStasisView: DollyStasisView;
     private readonly dollyStasisController: DollyStasisController;
 
-    get state(): IReadonlyProgramState {
-        return new ProgramState(
-            this.dollyModel.state,
-            this.homeModel.state,
-        );
-    }
-
     constructor(
         private readonly env: Env,
         private readonly input: IInput,

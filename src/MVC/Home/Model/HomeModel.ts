@@ -58,8 +58,8 @@ export class HomeModel implements IHomeModelInput, IHomeModelOutput {
     }
 
     reset() {
-        if (this.state.equals(ProgramState.DEFAULT.home)) return;
-        this.state = ProgramState.DEFAULT.home.clone();
+        if (this.state.equals(HomeState.DEFAULT)) return;
+        this.state = HomeState.DEFAULT.clone();
         this._hasChanged = true;
     }
 
