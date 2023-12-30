@@ -1,13 +1,14 @@
 import {IDollyStasisModelOutput} from "../Model/DollyStasisModel";
-import {IDollyModelOutput} from "../Model/DollyModel";
-import {IHomeModelOutput} from "../../Home/Model/HomeModel";
+import {IDollyModelOutput, DollyState} from "../Model/DollyModel";
+import {IHomeModelOutput, HomeState} from "../../Home/Model/HomeModel";
 import {StateQueryParams} from "../../StateQueryParams";
 import {History} from "../../../DOMTestable/History";
-import {DollyState} from "../Model/DollyState";
-import {HomeState} from '../../Home/Model/HomeState';
 
 export class DollyStasisView {
-    private readonly urlSearchParams = new StateQueryParams();
+    private readonly urlSearchParams = new StateQueryParams(
+        DollyState.DEFAULT,
+        HomeState.DEFAULT,
+    );
 
     constructor(
         private readonly dollyModel: IDollyModelOutput,
@@ -18,7 +19,7 @@ export class DollyStasisView {
     }
 
     update() {
-        if (!this.dollyStasisModel.hasStasisStarted) return;
+        if (!this.dollyStasisModel.state.isStasisStarted) return;
         this.updateURL();
     }
 

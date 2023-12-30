@@ -81,13 +81,15 @@ export async function load(env: Env, canvas: HTMLCanvasElement) {
         canvas: canvas,
     });
 
-    const dolly = new Object3D();
-    scene.add(dolly);
+    const dollyBody = new Object3D();
+    scene.add(dollyBody);
+    const dollyHead = new Object3D();
+    dollyBody.add(dollyHead);
 
     const camera = new PerspectiveCamera(50, 800 / 600);
     camera.rotation.set(0, 0, 0, 'YXZ');
     camera.position.set(0, BODY_HEIGHT, 0);
-    dolly.add(camera);
+    dollyHead.add(camera)
 
     const composer = new EffectComposer(renderer, {multisampling: 8});
     const normalPass = new NormalPass(scene, camera);
@@ -129,7 +131,8 @@ export async function load(env: Env, canvas: HTMLCanvasElement) {
     const object3DCollection: Object3DCollection = {
         homeDoorOpened: doorOpened,
         homeDoorClosed: doorClosed,
-        dolly,
+        dollyBody,
+        dollyHead,
         camera,
     };
 

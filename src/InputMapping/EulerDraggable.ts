@@ -6,7 +6,7 @@ export class EulerDraggable {
     get rotDelta(): DeltaEuler {
         return this._rotDelta;
     }
-    private readonly _rotDelta: DeltaEuler = new DeltaEuler(0, 0);
+    private readonly _rotDelta: DeltaEuler = new DeltaEuler(0, 0, 0);
     private readonly current: Vector2 = new Vector2();
 
     constructor(

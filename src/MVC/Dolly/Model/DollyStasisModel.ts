@@ -29,12 +29,12 @@ export interface IDollyStasisModelInput {
 }
 
 export interface IDollyStasisModelOutput {
-    readonly hasStasisStarted: boolean;
+    readonly state: Readonly<DollyStasisState>;
 }
 
 export class DollyStasisModel implements IDollyStasisModelInput, IDollyStasisModelOutput {
-    get hasStasisStarted(): boolean {
-        return this._state === StasisStarted.DEFAULT;
+    get state(): Readonly<DollyStasisState> {
+        return this._state;
     }
 
     private readonly noStasis = new NoStasis();

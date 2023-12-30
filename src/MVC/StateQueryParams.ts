@@ -1,11 +1,10 @@
+import {DollyState} from './Dolly/Model/DollyModel';
+import {HomeState} from './Home/Model/HomeModel';
+
 export class StateQueryParams {
     constructor(
-        public posX: number = 0,
-        public posY: number = 0,
-        public posZ: number = 0,
-        public rotX: number = 0,
-        public rotY: number = 0,
-        public doorOpened: boolean = false,
+        public dollyState: Readonly<DollyState>,
+        public homeState: Readonly<HomeState>,
     ) {
     }
 
@@ -16,6 +15,7 @@ export class StateQueryParams {
     private static readonly POS_Z_NAME = 'posZ';
     private static readonly ROT_X_NAME = 'rotX';
     private static readonly ROT_Y_NAME = 'rotY';
+    private static readonly ROT_Z_NAME = 'rotZ';
     private static readonly DOOR_OPENED_NAME = 'doorOpened';
     private static readonly EQ = '=';
     private static readonly AMP = '&';
@@ -27,11 +27,12 @@ export class StateQueryParams {
     toString(): string {
         // NOTE: Do not use encodeURIComponent() here. It is unnecessary, and it can make much garbage and GC is
         // critical here.
-        return StateQueryParams.Q + StateQueryParams.POS_X_NAME + StateQueryParams.EQ + this.posX.toFixed(StateQueryParams.POS_PRECISION) +
-            StateQueryParams.AMP + StateQueryParams.POS_Y_NAME + StateQueryParams.EQ + this.posY.toFixed(StateQueryParams.POS_PRECISION) +
-            StateQueryParams.AMP + StateQueryParams.POS_Z_NAME + StateQueryParams.EQ + this.posZ.toFixed(StateQueryParams.POS_PRECISION) +
-            StateQueryParams.AMP + StateQueryParams.ROT_X_NAME + StateQueryParams.EQ + this.rotX.toFixed(StateQueryParams.ROT_PRECISION) +
-            StateQueryParams.AMP + StateQueryParams.ROT_Y_NAME + StateQueryParams.EQ + this.rotY.toFixed(StateQueryParams.ROT_PRECISION) +
-            StateQueryParams.AMP + StateQueryParams.DOOR_OPENED_NAME + StateQueryParams.EQ + (this.doorOpened ? StateQueryParams.ONE : StateQueryParams.ZERO);
+        return StateQueryParams.Q + StateQueryParams.ROT_X_NAME + StateQueryParams.EQ + this.dollyState.rotation.x.toFixed(StateQueryParams.ROT_PRECISION) +
+            StateQueryParams.AMP + StateQueryParams.ROT_Y_NAME + StateQueryParams.EQ + this.dollyState.rotation.y.toFixed(StateQueryParams.ROT_PRECISION) +
+            StateQueryParams.AMP + StateQueryParams.ROT_Z_NAME + StateQueryParams.EQ + this.dollyState.rotation.z.toFixed(StateQueryParams.ROT_PRECISION) +
+            StateQueryParams.AMP + StateQueryParams.POS_X_NAME + StateQueryParams.EQ + this.dollyState.position.x.toFixed(StateQueryParams.POS_PRECISION) +
+            StateQueryParams.AMP + StateQueryParams.POS_Y_NAME + StateQueryParams.EQ + this.dollyState.position.y.toFixed(StateQueryParams.POS_PRECISION) +
+            StateQueryParams.AMP + StateQueryParams.POS_Z_NAME + StateQueryParams.EQ + this.dollyState.position.z.toFixed(StateQueryParams.POS_PRECISION) +
+            StateQueryParams.AMP + StateQueryParams.DOOR_OPENED_NAME + StateQueryParams.EQ + (this.homeState.doorOpened ? StateQueryParams.ONE : StateQueryParams.ZERO);
     }
 }

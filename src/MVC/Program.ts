@@ -1,5 +1,5 @@
 import {IInput} from '../InputMapping/IInput';
-import {FORWARD_VELOCITY, SIDEWAYS_VELOCITY, VERTICAL_VELOCITY} from '../Const';
+import {VELOCITY} from '../Const';
 import {DollyController} from './Dolly/Controller/DollyController';
 import {HomeModel} from './Home/Model/HomeModel';
 import {HomeController} from './Home/Controller/HomeController';
@@ -13,21 +13,21 @@ import {IResizable} from '../IResizable';
 import {Env} from '../EnvDetection';
 import {IStopwatch} from '../InputMapping/IStopwatch';
 import {IVRButtonFactory} from '../IVRButtonFactory';
-import {DollyModel} from './Dolly/Model/DollyModel';
+import {DollyModel, DollyState} from './Dolly/Model/DollyModel';
 import {Location} from '../DOMTestable/Location';
-import {StateQueryParams} from "./StateQueryParams";
-import {DollyStasisModel} from "./Dolly/Model/DollyStasisModel";
-import {DollyStasisView} from "./Dolly/View/DollyStasisView";
-import {History} from "../DOMTestable/History";
-import {DollyStasisController} from "./Dolly/Controller/DollyStasisController";
-import {DollyState, IReadonlyDollyState} from "./Dolly/Model/DollyState";
-import {DOLLY_STATE_MAP} from "./Dolly/Model/DOLLY_STATE_MAP";
-import {HomeState, IReadonlyHomeState} from './Home/Model/HomeState';
+import {StateQueryParams} from './StateQueryParams';
+import {DollyStasisModel} from './Dolly/Model/DollyStasisModel';
+import {DollyStasisView} from './Dolly/View/DollyStasisView';
+import {History} from '../DOMTestable/History';
+import {DollyStasisController} from './Dolly/Controller/DollyStasisController';
+import {DOLLY_STATE_MAP} from './Dolly/Model/DOLLY_STATE_MAP';
+import {HomeState} from './Home/Model/HomeModel';
+import {DollyLogger} from './Dolly/View/DollyLogger';
 
 
 interface IReadonlyProgramState {
-    readonly dolly: IReadonlyDollyState;
-    readonly home: IReadonlyHomeState;
+    readonly dolly: Readonly<DollyState>;
+    readonly home: Readonly<HomeState>;
 
     clone(): ProgramState;
 
@@ -96,9 +96,17 @@ export class Program {
         private readonly location: Location,
     ) {
         const initialState = Program.initialState(location);
-        this.dollyModel = new DollyModel(initialState.dolly, FORWARD_VELOCITY, VERTICAL_VELOCITY, SIDEWAYS_VELOCITY);
-        this.dollyController = new DollyController(input, stopwatch, this.dollyModel);
-        this.dollyView = new DollyView(env, dom, this.dollyModel, obj3Ds.dolly, obj3Ds.camera, vrButtonFactory);
+        this.dollyModel = new DollyModel(initialState.dolly, VELOCITY);
+        this.dollyController = new DollyController(env, input, stopwatch, this.dollyModel, obj3Ds.camera, obj3Ds.dollyHead);
+        this.dollyView = new DollyView(
+            env,
+            dom,
+            this.dollyModel,
+            obj3Ds.dollyHead,
+            obj3Ds.dollyBody,
+            obj3Ds.camera,
+            vrButtonFactory,
+        );
 
         this.homeModel = new HomeModel(initialState.home);
         this.homeController = new HomeController(input, this.homeModel);
@@ -128,13 +136,13 @@ export class Program {
 
         this.dollyView.update();
         this.homeView.update();
-        this.dollyStasisView.update()
+        this.dollyStasisView.update();
     }
 
     private static initialState(location: Location): ProgramState {
         const url = new URL(location.href);
-        if (url.searchParams.has("q")) {
-            const q = (url.searchParams.get("q") || "").toUpperCase();
+        if (url.searchParams.has('q')) {
+            const q = (url.searchParams.get('q') || '').toUpperCase();
             return DOLLY_STATE_MAP.hasOwnProperty(q)
                 ? new ProgramState(DOLLY_STATE_MAP[q], new HomeState(true))
                 : ProgramState.DEFAULT.clone();

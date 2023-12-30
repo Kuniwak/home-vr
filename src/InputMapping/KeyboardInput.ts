@@ -3,7 +3,7 @@ import {DOM} from '../DOM/DOM';
 import {DeltaEuler} from "./DeltaEuler";
 
 export class KeyboardInput implements IInput {
-    readonly rotation: DeltaEuler = new DeltaEuler(0, 0);
+    readonly rotation: DeltaEuler = new DeltaEuler(0, 0, 0);
 
     forwardForce: number = 0;
     verticalForce: number = 0;

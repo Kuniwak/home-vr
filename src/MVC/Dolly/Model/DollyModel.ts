@@ -1,12 +1,16 @@
 import {Euler, Vector3} from 'three';
-import {BASE_FPS, HEIGHT_2F} from '../../../Const';
+import {BASE_FPS, ENTRANCE_POSITION, HEIGHT_2F} from '../../../Const';
 import {DeltaEuler} from '../../../InputMapping/DeltaEuler';
-import {DollyState, IReadonlyDollyState} from "./DollyState";
+import {StateQueryParams} from '../../StateQueryParams';
 
 export interface IDollyModelInput {
     update(): void;
 
-    move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, sidewaysStrength: number, timeDeltaMSec: number): void;
+    move(
+        rotation: DeltaEuler | Euler,
+        strength: Vector3,
+        timeDeltaMSec: number,
+    ): void;
 
     reset(): void;
 
@@ -16,21 +20,55 @@ export interface IDollyModelInput {
 }
 
 export interface IDollyModelOutput {
-    readonly state: IReadonlyDollyState;
+    readonly state: Readonly<DollyState>;
     readonly hasChanged: boolean;
 }
 
+
+export class DollyState  {
+    constructor(
+        public rotation: Euler,
+        public position: Vector3,
+    ) {
+    }
+
+    clone(): DollyState {
+        return new DollyState(this.rotation.clone(), this.position.clone());
+    }
+
+    equals(other: Readonly<DollyState>): boolean {
+        return this.rotation.equals(other.rotation) && this.position.equals(other.position);
+    }
+
+    encodeTo(params: StateQueryParams): void {
+        params.dollyState = this;
+    }
+
+    static decodeFrom(params: URLSearchParams): DollyState {
+        return new DollyState(
+            new Euler(
+                parseFloat(params.get('rotX') || DollyState.DEFAULT.rotation.x.toString()),
+                parseFloat(params.get('rotY') || DollyState.DEFAULT.rotation.y.toString()),
+                parseFloat(params.get('rotZ') || DollyState.DEFAULT.rotation.z.toString()),
+            ),
+            new Vector3(
+                parseFloat(params.get('posX') || DollyState.DEFAULT.position.x.toString()),
+                parseFloat(params.get('posY') || DollyState.DEFAULT.position.y.toString()),
+                parseFloat(params.get('posZ') || DollyState.DEFAULT.position.z.toString()),
+            ),
+        );
+    }
+
+    static readonly DEFAULT: Readonly<DollyState> = new DollyState(
+        new Euler(0, Math.PI, 0, 'YXZ'),
+        ENTRANCE_POSITION,
+    );
+}
+
 export class DollyModel implements IDollyModelInput, IDollyModelOutput {
-    private readonly tmpForward: Vector3 = new Vector3();
-    private readonly tmpSideways: Vector3 = new Vector3();
-    private readonly tmpVertical: Vector3 = new Vector3();
+    private readonly tmpVector3: Vector3 = new Vector3();
     private readonly tmpEuler: Euler = new Euler(0, 0, 0, 'YXZ');
     private _hasChanged: boolean = false;
-
-    // NOTE: Three.js is in y-up right-handed coordinate system.
-    private static readonly forward: Readonly<Vector3> = new Vector3(0, 0, -1);
-    private static readonly sideways: Readonly<Vector3> = new Vector3(1, 0, 0);
-    private static readonly vertical: Readonly<Vector3> = new Vector3(0, 1, 0);
 
     get state(): DollyState {
         return this._state;
@@ -42,9 +80,7 @@ export class DollyModel implements IDollyModelInput, IDollyModelOutput {
 
     constructor(
         private _state: DollyState,
-        private readonly forwardVelocity: number,
-        private readonly verticalVelocity: number,
-        private readonly sidewaysVelocity: number,
+        private readonly velocity: Vector3,
     ) {
     }
 
@@ -58,36 +94,41 @@ export class DollyModel implements IDollyModelInput, IDollyModelOutput {
         this._hasChanged = true;
     }
 
-    move(rotation: DeltaEuler | Euler, forwardStrength: number, verticalStrength: number, sidewaysStrength: number, timeDeltaMSec: number) {
+    move(
+        rotation: DeltaEuler | Euler,
+        strength: Vector3,
+        timeDeltaMSec: number,
+    ) {
         if (rotation instanceof DeltaEuler) {
-            if (rotation.x !== 0 || rotation.y !== 0) this._hasChanged = true;
-            this._state.rotationX += rotation.x;
-            this._state.rotationY += rotation.y;
+            // NOTE: This is for PC or mobile.
+            if (rotation.x !== 0 || rotation.y !== 0 || rotation.z !== 0) {
+                this._hasChanged = true;
+                this._state.rotation.x += rotation.x;
+                this._state.rotation.y += rotation.y;
+                this._state.rotation.z += rotation.z;
+            }
         }
         else {
-            if (this._state.rotationX !== rotation.x || this._state.rotationY !== rotation.y) this._hasChanged =
-                true;
-            this._state.rotationX = rotation.x;
-            this._state.rotationY = rotation.y;
+            // NOTE: This is for only XR.
+            if (!this._state.rotation.equals(rotation)) {
+                this._hasChanged = true;
+                this._state.rotation.copy(rotation);
+            }
         }
-        this.tmpEuler.x = this._state.rotationX;
-        this.tmpEuler.y = this._state.rotationY;
+        this.tmpEuler.set(0, this._state.rotation.y, 0, 'YXZ');
 
-        if (forwardStrength !== 0 || verticalStrength !== 0 || sidewaysStrength !== 0) this._hasChanged = true;
+        if (strength.x !== 0 || strength.y !== 0 || strength.z !== 0) this._hasChanged = true;
         const timeFactor = timeDeltaMSec / 1000 * BASE_FPS;
 
-        this.tmpForward.copy(DollyModel.forward).applyEuler(this.tmpEuler);
-        this.tmpForward.multiplyScalar(this.forwardVelocity * forwardStrength * timeFactor);
-        this.tmpForward.y = 0;
+        this.tmpVector3.set(
+            this.velocity.x * strength.x * timeFactor,
+            this.velocity.y * strength.y * timeFactor,
+            // NOTE: Three.js is in y-up right-handed coordinate system.
+            -this.velocity.z * strength.z * timeFactor,
+        );
+        this.tmpVector3.applyEuler(this.tmpEuler);
 
-        this.tmpSideways.copy(DollyModel.sideways).applyEuler(this.tmpEuler);
-        this.tmpSideways.multiplyScalar(this.sidewaysVelocity * sidewaysStrength * timeFactor);
-        this.tmpSideways.y = 0;
-
-        this.tmpVertical.copy(DollyModel.vertical);
-        this.tmpVertical.y = this.verticalVelocity * verticalStrength * timeFactor;
-
-        this._state.position.add(this.tmpForward).add(this.tmpSideways).add(this.tmpVertical);
+        this._state.position.add(this.tmpVector3);
     }
 
     moveTo1F(): void {

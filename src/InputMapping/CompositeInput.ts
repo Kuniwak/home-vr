@@ -3,7 +3,7 @@ import {Euler} from "three";
 import {DeltaEuler} from "./DeltaEuler";
 
 export class CompositeInput implements IInput {
-    private static readonly DELTA_EULER_ZERO: Readonly<DeltaEuler> = new DeltaEuler(0, 0);
+    private static readonly DELTA_EULER_ZERO: Readonly<DeltaEuler> = new DeltaEuler(0, 0, 0);
 
     constructor(private readonly inputs: IInput[]) {
     }
