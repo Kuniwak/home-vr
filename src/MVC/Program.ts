@@ -4,11 +4,9 @@ import {DollyController} from './Dolly/Controller/DollyController';
 import {HomeModel} from './Home/Model/HomeModel';
 import {HomeController} from './Home/Controller/HomeController';
 import {DOM} from '../DOM/DOM';
-import {IAnimationLoop} from '../IAnimationLoop';
 import {HomeView} from './Home/View/HomeView';
 import {Object3DCollection} from '../Object3DCollection/Object3DCollection';
 import {DollyView} from './Dolly/View/DollyView';
-import {IRenderable} from '../IRenderable';
 import {IResizable} from '../IResizable';
 import {Env} from '../EnvDetection';
 import {IStopwatch} from '../InputMapping/IStopwatch';
@@ -22,7 +20,6 @@ import {History} from '../DOMTestable/History';
 import {DollyStasisController} from './Dolly/Controller/DollyStasisController';
 import {DOLLY_STATE_MAP} from './Dolly/Model/DOLLY_STATE_MAP';
 import {HomeState} from './Home/Model/HomeModel';
-import {DollyLogger} from './Dolly/View/DollyLogger';
 
 
 interface IReadonlyProgramState {
@@ -83,17 +80,15 @@ export class Program {
     private readonly dollyStasisController: DollyStasisController;
 
     constructor(
-        private readonly env: Env,
-        private readonly input: IInput,
+        env: Env,
+        input: IInput,
         private readonly dom: DOM,
-        private readonly obj3Ds: Object3DCollection,
-        private readonly renderer: IRenderable,
-        private readonly resizable: IResizable,
-        private readonly animation: IAnimationLoop,
-        private readonly stopwatch: IStopwatch,
-        private readonly vrButtonFactory: IVRButtonFactory,
-        private readonly history: History,
-        private readonly location: Location,
+        obj3Ds: Object3DCollection,
+        resizable: IResizable,
+        stopwatch: IStopwatch,
+        vrButtonFactory: IVRButtonFactory,
+        history: History,
+        location: Location,
     ) {
         const initialState = Program.initialState(location);
         this.dollyModel = new DollyModel(initialState.dolly, VELOCITY);

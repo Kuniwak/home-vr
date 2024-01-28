@@ -5,7 +5,7 @@ import {
     SKY_COLOR, HOME_MODEL_URL
 } from "./Const";
 import {
-    AmbientLight, AxesHelper,
+    AmbientLight,
     BackSide,
     Color,
     DirectionalLight,
@@ -18,24 +18,12 @@ import {
     WebGLRenderer
 } from "three";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
-import {
-    BlendFunction,
-    DepthDownsamplingPass,
-    EffectComposer,
-    EffectPass,
-    NormalPass,
-    RenderPass,
-    SSAOEffect,
-    TextureEffect
-} from "postprocessing";
 import {Env} from "./EnvDetection";
 import {skyFragment, skyVertex} from "./Shaders";
 import {ComposedResizable,} from "./IResizable";
 import {ResizablePerspectiveCamera} from "./Object3DCollection/ResizablePerspectiveCamera";
 import {VRButtonFactory} from "./IVRButtonFactory";
-import {ResizableEffectComposer} from "./Object3DCollection/ResizableEffectComposer";
-
-import {WebXRAwareEffectComposerRenderable} from "./WebXRAwareEffectComposerRenderable";
+import {buildRenderable} from "./Renderable/buildRenderable";
 import {Object3DCollection} from "./Object3DCollection/Object3DCollection";
 
 export async function load(env: Env, canvas: HTMLCanvasElement) {
@@ -77,7 +65,7 @@ export async function load(env: Env, canvas: HTMLCanvasElement) {
         powerPreference: "high-performance",
         antialias: false,
         stencil: false,
-        depth: false,
+        depth: true,
         canvas: canvas,
     });
 
@@ -91,36 +79,8 @@ export async function load(env: Env, canvas: HTMLCanvasElement) {
     camera.position.set(0, BODY_HEIGHT, 0);
     dollyHead.add(camera)
 
-    const composer = new EffectComposer(renderer, {multisampling: 8});
-    const normalPass = new NormalPass(scene, camera);
-    const depthDownsamplingPass = new DepthDownsamplingPass({
-        normalBuffer: normalPass.texture,
-        resolutionScale: 0.5,
-    });
-    const ssaoEffect = new SSAOEffect(camera, normalPass.texture, {
-        blendFunction: BlendFunction.MULTIPLY,
-        normalDepthBuffer: depthDownsamplingPass.texture,
-        worldDistanceThreshold: 20,
-        worldDistanceFalloff: 5,
-        worldProximityThreshold: 0.4,
-        worldProximityFalloff: 0.1,
-        luminanceInfluence: 0.7,
-        samples: 16,
-        radius: 0.04,
-        intensity: 1,
-        resolutionScale: 0.5
-    });
-    const textureEffect = new TextureEffect({
-        blendFunction: BlendFunction.SKIP,
-        texture: depthDownsamplingPass.texture,
-    });
 
-    composer.addPass(new RenderPass(scene, camera));
-    composer.addPass(normalPass);
-    composer.addPass(depthDownsamplingPass);
-    composer.addPass(new EffectPass(camera, ssaoEffect, textureEffect));
-
-    const renderable = new WebXRAwareEffectComposerRenderable(composer, renderer, camera);
+    const renderable = buildRenderable(env, renderer, camera, scene);
 
     scene.add(new AmbientLight(0xffffff, 2));
 
@@ -140,8 +100,7 @@ export async function load(env: Env, canvas: HTMLCanvasElement) {
         object3DCollection,
         renderable,
         resizable: new ComposedResizable([
-            new ResizableEffectComposer(composer),
-            renderer,
+            renderable,
             new ResizablePerspectiveCamera(camera),
         ]),
         xrsFactory: renderer.xr,
